@@ -1,0 +1,24 @@
+{
+  "name": "diplomawork",
+  "version": "1.0.0",
+  "description": "Software App For Booking Meeting Rooms Іn The Offices Of IT Companies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreyMyroshnychenko/DiplomaWork.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndreyMyroshnychenko/DiplomaWork/issues"
+  },
+  "homepage": "https://github.com/AndreyMyroshnychenko/DiplomaWork#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.3.4"
+  }
+}
