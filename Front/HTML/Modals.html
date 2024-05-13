@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In / Sign Up / Log Out</title>
+    <link rel="stylesheet" href="../CSS/styleModals.css">
+</head>
+<body>
+
+
+<button onclick="openModal('loginModal')">Log In</button>
+<button onclick="openModal('signupModal')">Sign Up</button>
+<button onclick="openModal('logoutModal')">Log Out</button>
+
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        <div class="modal-header">Log In</div>
+        <input type="text" class="modal-input" placeholder="Username">
+        <input type="email" class="modal-input" placeholder="Email">
+    </div>
+</div>
+
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('signupModal')">&times;</span>
+        <div class="modal-header">Sign Up</div>
+        <input type="text" class="modal-input" placeholder="Username">
+        <input type="email" class="modal-input" placeholder="Email">
+        <input type="text" class="modal-input" placeholder="Bank Card Number">
+        <input type="text" class="modal-input" placeholder="Postal Code">
+        <input type="text" class="modal-input" placeholder="Country">
+        <input type="text" class="modal-input" placeholder="City">
+        <input type="text" class="modal-input" placeholder="Phone Number">
+    </div>
+</div>
+
+<div id="logoutModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('logoutModal')">&times;</span>
+        <div class="modal-header">Log Out</div>
+        <p>Are you sure you want to log out?</p>
+        <button onclick="confirmLogout()">Yes</button>
+        <button onclick="closeModal('logoutModal')">No</button>
+    </div>
+</div>
+
+<script>
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
+
+    function confirmLogout() {
+    alert("You have been logged out.");
+    closeModal('logoutModal');
+  
+    window.location.href="mainPage.html"
+}
+</script>
+
+</body>
+</html>

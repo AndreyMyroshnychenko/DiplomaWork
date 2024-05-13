@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Rooms = require('../Models/Rooms');
 const Booking = require('../Models/Booking');
-// Endpoint для получения списка доступных комнат
 router.get('/rooms', async (req, res) => {
   try {
     const rooms = await Rooms.find();
