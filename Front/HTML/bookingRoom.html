@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Booking System</title>
+    <link rel="stylesheet" href="../CSS/styleBookingRoom.css">
+</head>
+<body>
+    <div class="header">
+        <a href="mainPage.html" class="menu-btn">Main Page</a>
+        <a href="aboutUs.html" class="menu-btn">About Us</a>
+        <a href="bookingRoom.html" class="menu-btn active">Book a Room</a>
+        <!--
+        <?php if ($loggedIn): ?>
+            <span>Greetings, <?php echo $username; ?></span>
+            <a href="logout.php" class="menu-btn">Log Out</a>
+        <?php else: ?>
+            <a href="login.html" class="menu-btn">Log In</a>
+            <a href="signup.html" class="menu-btn">Sign Up</a>
+        <?php endif; ?> -->
+    </div>
+    <div class="modal" id="companyModal">
+        <div class="modal-content">
+            <form action="/select-company" method="post">
+                <label for="company">Select Company:</label>
+                <select name="company" id="company">
+                    <option value="company1">Company 1</option>
+                    <option value="company2">Company 2</option>
+                </select>
+                <button type="submit">Select</button>
+            </form>
+        </div>
+    </div>
+    <ul class="city-list">
+        <li>
+            <h3>City 1</h3>
+            <ul class="room-list">
+                <li>
+                    <h4>Room 1</h4>
+                    <p>Description of Room 1</p>
+                    <button class="btn-book">Book</button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="container">
+        <h2></h2>
+        <div id="rooms-list"></div>
+    </div>
+
+    <script src="../scripts.js"></script>
+</body>
+</html>
