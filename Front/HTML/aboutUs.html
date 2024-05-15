@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
     <link rel="stylesheet" type="text/css" href="../CSS/styleAboutUsPage.css">
+    <link rel="stylesheet" type="text/css" href="../CSS/styleMainPage.css">
 </head>
 <body>
 
+    <img src="../images/Earth.jpg" class="mainImg" alt="Earth Image">
     <div class="header">
         <a href="mainPage.html" class="menu-btn">Main Page</a>
-        <a href="aboutUs.html" class="menu-btn active">About Us</a>
         <a href="bookingRoom.html" class="menu-btn">Book a Room</a>
         <!--
         <?php if ($loggedIn): ?>
@@ -21,12 +22,13 @@
             <a href="signup.html" class="menu-btn">Sign Up</a>
         <?php endif; ?> -->
     </div>
-
-    <div class="scroll-text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque ante in est efficitur, at dictum turpis euismod. Nullam auctor libero quis odio aliquet molestie. Vivamus laoreet, elit at aliquam tincidunt, lectus magna aliquet magna, eu aliquam libero magna in nisi. Phasellus tristique rutrum diam, sed feugiat lorem dapibus ac. Ut in diam sit amet mi lobortis fringilla. Nullam ultricies semper risus vel elementum. Proin non justo ut risus suscipit sollicitudin. Morbi sit amet eleifend lectus. Nam vitae vulputate ligula. Nullam malesuada ultricies nibh eget scelerisque. Quisque convallis varius dapibus. Vestibulum ultrices efficitur fermentum. Donec id est nec ante ultrices elementum. Vestibulum fringilla venenatis elit vel sollicitudin.
+    <div class="text">
+        <div class="scroll-text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque ante in est efficitur, at dictum turpis euismod. Nullam auctor libero quis odio aliquet molestie. Vivamus laoreet, elit at aliquam tincidunt, lectus magna aliquet magna, eu aliquam libero magna in nisi. Phasellus tristique rutrum diam, sed feugiat lorem dapibus ac. Ut in diam sit amet mi lobortis fringilla. Nullam ultricies semper risus vel elementum. Proin non justo ut risus suscipit sollicitudin. Morbi sit amet eleifend lectus. Nam vitae vulputate ligula. Nullam malesuada ultricies nibh eget scelerisque. Quisque convallis varius dapibus. Vestibulum ultrices efficitur fermentum. Donec id est nec ante ultrices elementum. Vestibulum fringilla venenatis elit vel sollicitudin.
+        </div>
     </div>
 
-    <script>
+    <!-- <script>
         let scrollText = document.querySelector('.scroll-text');
         let isScrolling = false;
 
@@ -45,6 +47,6 @@
                 scrollText.scrollTop += 1; 
             }
         }, 100);
-    </script>
+    </script> -->
 </body>
 </html>
