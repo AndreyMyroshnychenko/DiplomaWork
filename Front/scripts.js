@@ -108,3 +108,21 @@ document.addEventListener('DOMContentLoaded', function() {
         rl.close();
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('.LogInMenu form');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Предотвращаем отправку формы по умолчанию
+
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+
+            if (username) {
+                welcomeMessage.textContent = `Welcome, ${username}!`;
+                usernameInput.value = ''; // Очищаем поле ввода имени
+            }
+        });
+    }
+});
