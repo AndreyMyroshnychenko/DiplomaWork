@@ -29,7 +29,7 @@
 
 .mainImg {
     width: 100%;
-    height: calc(102vh - 40px); /* Учитываем высоту хедера */
+    height: calc(102vh - 40px);
     object-fit: cover;
 }
 span{
@@ -46,5 +46,5 @@ span{
     width: 98.9%;
     top: 0;
     z-index: 1000;
-    box-sizing: border-box; /* Учтем padding в общей ширине */
+    box-sizing: border-box;
 }
