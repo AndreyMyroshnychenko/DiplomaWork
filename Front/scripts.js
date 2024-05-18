@@ -171,3 +171,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const menuIcon = document.getElementById('menuIcon');
+    const sideMenu = document.getElementById('sideMenu');
+
+    menuIcon.addEventListener('mouseenter', function() {
+        sideMenu.classList.add('active');
+    });
+
+    sideMenu.addEventListener('mouseleave', function() {
+        sideMenu.classList.remove('active');
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarLabel = document.querySelector('.avatarLabel');
+    const avatarImage = avatarLabel.querySelector('img');
+
+    const savedAvatar = localStorage.getItem('avatarImage');
+    if (savedAvatar) {
+        avatarImage.src = savedAvatar;
+    }
+
+
+    avatarInput.addEventListener('change', function(event) {
+        const file = event.target.files[0]; 
+        const reader = new FileReader(); 
+
+        reader.onload = function(e) {
+            const imageDataUrl = e.target.result;
+            avatarImage.src = imageDataUrl; 
+
+            localStorage.setItem('avatarImage', imageDataUrl);
+        };
+
+        reader.readAsDataURL(file);
+    });
+});

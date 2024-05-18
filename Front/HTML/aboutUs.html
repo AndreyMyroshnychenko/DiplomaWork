@@ -13,14 +13,8 @@
     <div class="header">
         <a href="mainPage.html" class="menu-btn">Main Page</a>
         <a href="bookingRoom.html" class="menu-btn">Book a Room</a>
-        <!--
-        <?php if ($loggedIn): ?>
-            <span>Greetings, <?php echo $username; ?></span>
-            <a href="logout.php" class="menu-btn">Log Out</a>
-        <?php else: ?>
-            <a href="login.html" class="menu-btn">Log In</a>
-            <a href="signup.html" class="menu-btn">Sign Up</a>
-        <?php endif; ?> -->
+        <p class="userName"><a id="userGreetingLink" href="ProfilePage.html">Guest</a></p>
+        <button class="logOutButton" id="logoutButton" style="display:none;">Log Out</button>
     </div>
     <div class="text">
         <div class="scroll-text">
@@ -32,5 +26,6 @@
             Приємного Користування нашим додатком!
         </div>
     </div>
+    <script src="../scripts.js"></script>
 </body>
 </html>

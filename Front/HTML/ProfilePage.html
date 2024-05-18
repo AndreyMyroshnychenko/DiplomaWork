@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../CSS/styleProfile.css">
     <link rel="stylesheet" type="text/css" href="../CSS/styleMainPage.css">
-
     <title>Profile</title>
 </head>
 <body>
     <img src="../images/Earth.jpg" class="mainImg" alt="Earth Image">
-
+    <div class="header">
+        <div class="menu-left">
+            <a href="aboutUs.html" class="menu-btn">About Us</a>
+            <a href="bookingRoom.html" class="menu-btn">Book a Room</a>
+        </div>
+        <div class="userAvatar">
+            <input type="file" id="avatarInput" style="display:none;">
+            <label for="avatarInput" class="avatarLabel" id="avatarImage"><img src="../images/AvatarDefault.jpg" alt="Avatar"></label>
+        </div>
+        <div class="menu-right">
+            <div class="menuContainer">
+                <div class="menuIcon" id="menuIcon">
+                    <div class="menuBar"></div>
+                    <div class="menuBar"></div>
+                    <div class="menuBar"></div>
+                </div>
+                <div class="sideMenu" id="sideMenu">
+                    <button class="myBookingsBtn">My Bookings</button>
+                </div>
+            </div>
+            <button class="logOutButton" id="logoutButton" style="display:none;">Log Out</button>
+        </div>
+    </div>
+    <script src="../scripts.js"></script>
 </body>
 </html>
