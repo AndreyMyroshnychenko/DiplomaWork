@@ -26,7 +26,7 @@ async function checkRoomAvailability(roomId, startTime, endTime) {
 
 // create booking
 router.post('/bookings', async (req, res) => {
-  const { room, startTime, endTime, participant } = req.body;
+  const { room, startTime, endTime} = req.body;
 
   
   const isRoomAvailable = await checkRoomAvailability(room, startTime, endTime);
@@ -39,7 +39,6 @@ router.post('/bookings', async (req, res) => {
     room,
     startTime,
     endTime,
-    participant,
     confirmed: false,
   });
 

@@ -2,8 +2,8 @@
   "name": "diplomawork",
   "version": "1.0.0",
   "description": "Software App For Booking Meeting Rooms Іn The Offices Of IT Companies.",
-  "main": "index.js",
   "type": "module",
+  "main": "scripts.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
