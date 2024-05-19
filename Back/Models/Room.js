@@ -5,18 +5,19 @@ const roomsSchema = new Schema({
   capacity: { type: Number, required: true },
   equipment: [{ type: String }],
   available: { type: Boolean, default: true },
+  likes: { type: Number, default: 0 }
 });
 
-const Rooms = model('Rooms', roomsSchema);
+const Room = model('Rooms', roomsSchema);
 async function findRooms() {
   try {
-    const rooms = await Rooms.find();
+    const rooms = await Room.find();
     return rooms;
   } catch (err) {
     throw new Error('Error fetching rooms from database');
   }
 }
 
-export default Rooms;
+export default Room;
 export { findRooms };
 

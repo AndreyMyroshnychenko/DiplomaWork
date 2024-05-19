@@ -1,6 +1,6 @@
 import { Router } from 'express';
 const router = Router();
-import { findRooms } from '../Models/Rooms';
+import { findRooms } from '../Models/Room';
 import Booking, { findOne, findById } from '../Models/Booking';
 router.get('/rooms', async (req, res) => {
   try {
