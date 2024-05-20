@@ -108,37 +108,90 @@
 //         rl.close();
 //     });
 // });
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
 
     if (loginForm) {
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
-
-            const usernameInput = document.getElementById('username');
-            const username = usernameInput.value.trim();
-
-            if (username) {
-                localStorage.setItem('username', username); 
-                window.location.href = 'mainPage.html'; 
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = loginForm.email.value;
+            const password = loginForm.password.value;
+            
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                alert(data.message);
+                window.location.href = 'mainPage.html'; // Перенаправлення на головну сторінку
+            } else {
+                alert(data.message);
             }
         });
     }
 
     if (signupForm) {
-        signupForm.addEventListener('submit', function(event) {
-            event.preventDefault(); 
-
-            const usernameInput = document.getElementById('username');
-            const username = usernameInput.value.trim();
-
-            if (username) {
-                localStorage.setItem('username', username);
-                window.location.href = 'mainPage.html'; 
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = signupForm.name.value;
+            const email = signupForm.email.value;
+            const password = signupForm.password.value;
+            
+            const response = await fetch('/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password }),
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(data.message);
+                window.location.href = 'login.html'; // Перенаправлення на сторінку входу
+            } else {
+                alert(data.message);
             }
         });
     }
+    const token = localStorage.getItem('token');
+    if (token) {
+        fetch('/auth/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                document.getElementById('userName').textContent = data.user.name;
+                document.getElementById('logoutButton').style.display = 'block';
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            
+        }); 
+    }else{
+        document.getElementById('logoutButton').style.display = 'none';
+    }
+    const logoutBtn = document.getElementById('logoutButton');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            alert('You have been logged out.');
+            window.location.href = 'login.html'; 
+        });
+    }
+
 
     const userGreetingLink = document.getElementById('userGreetingLink');
     const loginLink = document.getElementById('loginLink');
@@ -188,13 +241,12 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const avatarInput = document.getElementById('avatarInput');
     const avatarLabel = document.querySelector('.avatarLabel');
-    const avatarImage = avatarLabel.querySelector('img');
+    const avatarImage = avatarLabel.querySelector('.ave');
 
     const savedAvatar = localStorage.getItem('avatarImage');
     if (savedAvatar) {
         avatarImage.src = savedAvatar;
     }
-
 
     avatarInput.addEventListener('change', function(event) {
         const file = event.target.files[0]; 

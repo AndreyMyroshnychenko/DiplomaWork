@@ -1,7 +1,11 @@
 import { Router } from 'express';
 const router = Router();
 import { findRooms } from '../Models/Room';
+import authRouter, { authMiddleware } from './Routes/auth';
+import apiRouter from './Routes/api';
 import Booking, { findOne, findById } from '../Models/Booking';
+
+const app=express();
 router.get('/rooms', async (req, res) => {
   try {
     const rooms = await findRooms();
@@ -82,6 +86,12 @@ router.put('/bookings/:id/checkin', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+app.use('/auth', authRouter); 
+app.use('/api', authMiddleware, apiRouter);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 export default router;
