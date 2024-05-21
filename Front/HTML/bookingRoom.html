@@ -4,43 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Booking System</title>
-    <link rel="stylesheet" href="../CSS/styleBookingRoom.css">
+    <link rel="stylesheet" type="text/css" href="../CSS/styleBookingRoom.css">
 </head>
 <body>
     <div class="header">
         <a href="mainPage.html" class="menu-btn">Main Page</a>
-        <a href="aboutUs.html" class="menu-btn">About Us</a>
+        <a href="aboutUs.html" class="menu-btn protected">About Us</a>
+        <a id="userGreetingLink" href="ProfilePage.html">Guest</a>
+        <button class="logOutButton" id="logoutButton" style="display:none;">Log Out</button>
     </div>
-    <div class="modal" id="companyModal">
-        <div class="modal-content">
-            <form action="/select-company" method="post">
-                <label for="company">Select Company:</label>
-                <select name="company" id="company">
-                    <option value="company1">Company 1</option>
-                    <option value="company2">Company 2</option>
+    <div class="container">
+        <img src="../images/Earth.jpg" class="mainImg" alt="Earth Image">
+
+        <div class="modal" id="companyModal">
+            <div class="modal-content">
+                <form id="companyForm">
+                    <label for="company">Select Company:</label>
+                    <select name="company" id="company">
+                        <option value="apple">Apple</option>
+                        <option value="blizzard">Blizzard</option>
+                        <option value="microsoft">Microsoft</option>
+                        <option value="google">Google</option>
+                    </select>
+                    <label for="country">Select Country:</label>
+                    <select name="country" id="country">
+                        <option value="usa">USA</option>
+                        <option value="germany">Germany</option>
+                        <option value="ukraine">Ukraine</option>
+                        <option value="uk">UK</option>
+                    </select>
+                    <button type="submit">Select</button>
+                </form>
+                <p id="error-message" style="color: red;"></p>
+            </div>
+        </div>
+
+        <div id="roomsContainer" style="display: none;">
+            <ul class="room-list">
+                <!-- Room items will be populated by JavaScript -->
+            </ul>
+        </div>
+
+        <div class="room-details" id="roomDetails" style="display: none;">
+            <div class="room-details-content">
+                <h4 id="roomTitle">Room Details</h4>
+                <p id="roomDescription">Description of the room.</p>
+                <div id="roomImages">
+                    <button id="prevImage" class="arrow-btn">&larr;</button>
+                    <img id="roomImage" src="../images/OfficeApple1_1.jpg" alt="Room Image" width="300">
+                    <button id="nextImage" class="arrow-btn">&rarr;</button>
+                </div>
+                <label for="bookingTime">Select Time:</label>
+                <select id="bookingTime">
+                    <!-- Time options will be populated by JavaScript -->
                 </select>
-                <button type="submit">Select</button>
-            </form>
+                <label for="note">Note:</label>
+                <textarea id="note" rows="4" cols="50" placeholder="Enter any notes here..."></textarea>
+                <p id="noteError" style="color: red;"></p>
+                <div class="buttons">
+                    <button id="bookRoom">Book</button>
+                    <button id="closeDetails">Close</button>
+                </div>
+            </div>
         </div>
     </div>
-    <ul class="city-list">
-        <li>
-            <h3>City 1</h3>
-            <ul class="room-list">
-                <li>
-                    <h4>Room 1</h4>
-                    <p>Description of Room 1</p>
-                    <button class="btn-book">Book</button>
-                </li>
-            </ul>
-        </li>
-    </ul>
-
-    <div class="container">
-        <h2></h2>
-        <div id="rooms-list"></div>
-    </div>
-
-    <script src="../scripts.js" type="module"></script>
+    <div id="overlay" style="display: none;"></div>
+    <script src="../scripts.js"></script>
 </body>
 </html>

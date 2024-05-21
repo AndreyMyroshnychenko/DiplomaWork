@@ -1,10 +1,5 @@
-
 .header {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
+    height: 80px;
 }
 
 .menu-left, .menu-right {
@@ -57,21 +52,24 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: white;
+    background-color: white; 
     padding: 10px;
     border: 1px solid black;
     display: none;
+    color: black; 
 }
 
-.sideMenu.active {
-    display: block;
-}
-
-.myBookingsBtn {
-    display: block;
+#myBookingsBtn{
     background-color: lightblue;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    color: black;
 }
 
+
+.sideMenu.active {
+    display: block;
+    margin-top: 20px;
+
+}

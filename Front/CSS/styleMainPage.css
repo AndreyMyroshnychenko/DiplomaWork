@@ -1,12 +1,56 @@
-.menu-btn {
-    display: inline-block;
-    padding: 24px 10px;
-    margin-right: 10px;
-    border: 2px solid wheat;
-    border-radius: 50px;
-    text-decoration: none;
-    color: white;
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    overflow-y: hidden; 
 }
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 97.3%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #332e2e;
+    color: white;
+    z-index: 1000; 
+}
+
+
+.header a, .header button {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: 2px solid white; 
+    border-radius: 40px;
+    background: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.header a:hover, .header button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header .logOutButton {
+    background-color: white;
+    color: #332e2e; 
+}
+
+.header .logOutButton:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.mainImg {
+    width: 100%;
+    object-fit: cover;
+}
+
 
 .center-text {
     margin: 20vh auto 0;
@@ -23,26 +67,6 @@
 }
 
 
-.mainImg {
-    width: 100%;
-    height: calc(102vh - 40px);
-    object-fit: cover;
-}
-span{
-    color: white;
-    font-size: 20px;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    background-color: #151414;
-    padding: 15px;
-    position: fixed;
-    width: 98.9%;
-    top: 0;
-    z-index: 1000;
-    box-sizing: border-box;
-}
 #userGreetingLink{
     display: inline-block;
     padding: 10px 20px;
@@ -53,15 +77,6 @@ span{
     color: white;
 }
 
-.logOutButton{
-    display: inline-block;
-    padding: 10px 20px;
-    margin-right: 10px;
-    border: 2px solid wheat;
-    border-radius: 50px;
-    text-decoration: none;
-    color: black;
-}
 .menu-btn:hover{
 
 }
