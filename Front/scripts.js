@@ -178,30 +178,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const editBookingModal = document.getElementById('editBookingModal');
 
     const bookings = [
-        { id: 1, title: "Meeting with Team", time: "10:00", notes: "Discuss project" },
-        { id: 2, title: "Client Presentation", time: "14:00", notes: "Prepare slides" },
-        { id: 3, title: "Weekly Sync", time: "16:00", notes: "Review progress" },
-        { id: 4, title: "Weekly Sync", time: "16:00", notes: "Review progress" },
-        { id: 5, title: "Weekly Sync", time: "16:00", notes: "Review progress" },
-        { id: 6, title: "Weekly Sync", time: "16:00", notes: "Review progress" },
-        { id: 7, title: "Weekly Sync", time: "16:00", notes: "Review progress" },
+        { id: 1, title: "Meeting with Team", startTime: "10:00", endTime: "11:00", notes: "Discuss project" },
+        { id: 2, title: "Client Presentation", startTime: "14:00", endTime: "15:00", notes: "Prepare slides" },
+        { id: 3, title: "Weekly Sync", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
+        { id: 4, title: "Weekly Sync", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
+        { id: 5, title: "Weekly Sync", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
+        { id: 6, title: "Weekly Sync", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
+        { id: 7, title: "Weekly Sync", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
     ];
 
     myBookingsBtn.addEventListener('click', function() {
         bookingList.innerHTML = bookings.map(booking => `
             <div class="booking-item" data-id="${booking.id}">
                 <h3>${booking.title}</h3>
-                <p>Time: ${booking.time}</p>
+                <p>Time: ${booking.startTime} - ${booking.endTime}</p>
                 <p>Notes: ${booking.notes}</p>
             </div>
         `).join('');
         bookingList.style.display = 'block';
-    });
-
-    bookingList.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-        bookingList.style.display = 'none';
-        contextMenu.style.display = 'none';
     });
 
     bookingList.addEventListener('click', function(event) {
@@ -215,17 +209,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    bookingList.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        bookingList.style.display = 'none';
+        contextMenu.style.display = 'none';
+    });
+
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.context-menu') && !event.target.closest('.booking-item')) {
             contextMenu.style.display = 'none';
         }
     });
 
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+    });
+
     document.getElementById('editBookingBtn').addEventListener('click', function() {
         const bookingId = contextMenu.dataset.bookingId;
         const booking = bookings.find(b => b.id == bookingId);
         document.getElementById('bookingTitle').value = booking.title;
-        document.getElementById('bookingTime').value = booking.time;
+        document.getElementById('bookingStartTime').value = booking.startTime;
+        document.getElementById('bookingEndTime').value = booking.endTime;
         document.getElementById('bookingNotes').value = booking.notes;
         editBookingModal.dataset.bookingId = booking.id;
         editBookingModal.style.display = 'block';
@@ -241,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
             bookingList.innerHTML = bookings.map(booking => `
                 <div class="booking-item" data-id="${booking.id}">
                     <h3>${booking.title}</h3>
-                    <p>Time: ${booking.time}</p>
+                    <p>Time: ${booking.startTime} - ${booking.endTime}</p>
                     <p>Notes: ${booking.notes}</p>
                 </div>
             `).join('');
@@ -254,13 +259,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const bookingId = editBookingModal.dataset.bookingId;
         const booking = bookings.find(b => b.id == bookingId);
         booking.title = document.getElementById('bookingTitle').value;
-        booking.time = document.getElementById('bookingTime').value;
+        booking.startTime = document.getElementById('bookingStartTime').value;
+        booking.endTime = document.getElementById('bookingEndTime').value;
         booking.notes = document.getElementById('bookingNotes').value;
         editBookingModal.style.display = 'none';
         bookingList.innerHTML = bookings.map(booking => `
             <div class="booking-item" data-id="${booking.id}">
                 <h3>${booking.title}</h3>
-                <p>Time: ${booking.time}</p>
+                <p>Time: ${booking.startTime} - ${booking.endTime}</p>
                 <p>Notes: ${booking.notes}</p>
             </div>
         `).join('');
@@ -268,9 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('cancelEditBtn').addEventListener('click', function() {
         editBookingModal.style.display = 'none';
-    });
-    document.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
     });
 });
 
