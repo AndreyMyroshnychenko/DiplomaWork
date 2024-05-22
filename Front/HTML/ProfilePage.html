@@ -30,9 +30,29 @@
                     <button id="myBookingsBtn">My Bookings</button>
                 </div>
             </div>
-            <button class="logOutButton" id="logoutButton" style="display:none;">Log Out</button>
         </div>
     </div>
+
+    <div class="booking-list" id="bookingList">
+        <!-- Booking items will be appended here by JS -->
+    </div>
+
+    <div class="context-menu" id="contextMenu">
+        <button id="editBookingBtn">Edit Booking</button>
+        <button id="cancelBookingBtn">Cancel Booking</button>
+    </div>
+
+    <div class="modal" id="editBookingModal">
+        <label for="bookingTitle">Booking Title</label>
+        <input type="text" id="bookingTitle" />
+        <label for="bookingTime">Booking Time</label>
+        <input type="time" id="bookingTime" />
+        <label for="bookingNotes">Notes</label>
+        <textarea id="bookingNotes"></textarea>
+        <button id="confirmEditBtn">Confirm</button>
+        <button id="cancelEditBtn">Cancel</button>
+    </div>
+
     <script src="../scripts.js"></script>
 </body>
 </html>
