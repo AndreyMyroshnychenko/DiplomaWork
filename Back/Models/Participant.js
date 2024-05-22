@@ -1,34 +1,9 @@
-import { Schema, model } from 'mongoose';
-import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
-const participantSchema = new Schema({
-  name: { type: String, required: true },
-  email: { 
-    type: String, 
-    required: true, 
-    unique: true,
-    validate: {
-      validator: function(validatePass) {
-        return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(validatePass);
-      },
-      message: props => `${props.value} is not a valid email!`
-    }
-  },
-  password: { type: String, required: true },
-}, {
-  timestamps: true 
+const participantSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
 });
 
-participantSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-
-participantSchema.methods.comparePassword = function(candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
-const Participant = model('Participant', participantSchema);
-
-export default Participant;
+export default mongoose.model('Participant', participantSchema);

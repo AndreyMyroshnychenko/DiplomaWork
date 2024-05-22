@@ -1,11 +1,10 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-const ratingSchema = new Schema({
-  room: { type: Schema.Types.ObjectId, ref: 'Room', required: true },
-  client: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
-  rating: { type: Number, required: true }
+const ratingSchema = new mongoose.Schema({
+    participant: { type: mongoose.Schema.Types.ObjectId, ref: 'Participant', required: true },
+    room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    comment: String
 });
 
-const Rating = model('Rating', ratingSchema);
-
-export default Rating;
+export default mongoose.model('Rating', ratingSchema);

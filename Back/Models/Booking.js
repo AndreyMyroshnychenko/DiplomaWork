@@ -1,27 +1,10 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-const bookingSchema = new Schema({
-  room: { type: Schema.Types.ObjectId, ref: 'Room', required: true },
-  participant: { type: Schema.Types.ObjectId, ref: 'Participant', required: true },
-  startTime: { type: Date, required: true, index: true },
-  endTime: { type: Date, required: true, index: true },
-  confirmed: { type: Boolean, default: false },
-}, {
-  timestamps: true, 
+const bookingSchema = new mongoose.Schema({
+    participant: { type: mongoose.Schema.Types.ObjectId, ref: 'Participant', required: true },
+    room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
+    start: { type: Date, required: true },
+    end: { type: Date, required: true }
 });
 
-
-bookingSchema.path('endTime').validate(function (value) {
-  return value > this.startTime;
-}, 'End time must be greater than start time');
-
-
-bookingSchema.methods.confirm = function () {
-  this.confirmed = true;
-  return this.save();
-};
-
-
-const Booking = model('Booking', bookingSchema);
-
-export default Booking;
+export default mongoose.model('Booking', bookingSchema);

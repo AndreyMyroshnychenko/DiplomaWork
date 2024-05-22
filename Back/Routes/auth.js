@@ -1,63 +1,61 @@
-import { Router } from 'express';
-import Participant from '../Models/Participant';
+import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import Participant from '../Models/Participant.js';
 
-dotenv.config();
+const router = express.Router();
 
-const router = Router();
-const secretKey = process.env.JWT_SECRET;
-
-router.post('/signup', async (req, res) => {
-  try {
+// Registration
+router.post('/signup.html', async (req, res) => {
     const { name, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newParticipant = new Participant({ name, email, password: hashedPassword });
-    await newParticipant.save();
-    res.status(201).json({ message: 'Participant registered successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const participant = new Participant({ name, email, password: hashedPassword });
+        await participant.save();
+
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to register user' });
+    }
 });
 
-router.post('/login', async (req, res) => {
-  try {
+// Login
+router.post('/login.html', async (req, res) => {
     const { email, password } = req.body;
-    const participant = await Participant.findOne({ email });
-    if (!participant) {
-      return res.status(404).json({ message: 'Participant not found' });
+
+    try {
+        const participant = await Participant.findOne({ email });
+        if (!participant || !await bcrypt.compare(password, participant.password)) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        const token = jwt.sign({ id: participant._id }, 'secretKey', { expiresIn: '1h' });
+        res.json({ token });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to login' });
     }
-    const isMatch = await bcrypt.compare(password, participant.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-    // Створення JWT токену
-    const token = jwt.sign({ id: participant._id, email: participant.email }, secretKey, { expiresIn: '1h' });
-    res.json({ message: 'Login successful', token });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
 
-// Middleware для захисту маршрутів
-const authMiddleware = (req, res, next) => {
-  const token = req.headers['authorization'];
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
-  }
-  try {
-    const decoded = jwt.verify(token.split(' ')[1], secretKey);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: 'Invalid token.' });
-  }
+// Middleware to check if user is authenticated
+const authenticateUser = (req, res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized access' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, 'secretKey');
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Unauthorized access' });
+    }
 };
 
-router.post('/logout', (req, res) => {
-  res.json({ message: 'Logout successful' });
+// Protected route example
+router.get('/protectedRoute', authenticateUser, (req, res) => {
+    res.json({ message: 'Access granted to protected route' });
 });
 
-export { authMiddleware };
 export default router;

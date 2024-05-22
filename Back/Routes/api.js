@@ -1,98 +1,54 @@
-import { Router } from 'express';
-const router = Router();
-import { findRooms } from '../Models/Room';
-import authRouter, { authMiddleware } from './Routes/auth';
-import apiRouter from './Routes/api';
-import Booking, { findOne, findById } from '../Models/Booking';
+import express from 'express';
+import Room from '../Models/Room.js';
+import Booking from '../Models/Booking.js';
+import Rating from '../Models/Rating.js';
 
-const app=express();
+const router = express.Router();
+
+// Get all rooms
 router.get('/rooms', async (req, res) => {
-  try {
-    const rooms = await findRooms();
-    res.json(rooms);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-// booking business logic
-// room is available?
-async function checkRoomAvailability(roomId, startTime, endTime) {
-  const existingBooking = await findOne({
-    room: roomId,
-    $or: [
-      { startTime: { $lt: endTime }, endTime: { $gt: startTime } }, 
-      { startTime: { $gte: startTime, $lt: endTime } }, 
-      { endTime: { $gt: startTime, $lte: endTime } }, 
-    ],
-  });
-  return !existingBooking; 
-}
-
-// create booking
-router.post('/bookings', async (req, res) => {
-  const { room, startTime, endTime} = req.body;
-
-  
-  const isRoomAvailable = await checkRoomAvailability(room, startTime, endTime);
-  if (!isRoomAvailable) {
-    return res.status(400).json({ message: 'Room is not available at the specified time' });
-  }
-
-  // new booking
-  const booking = new Booking({
-    room,
-    startTime,
-    endTime,
-    confirmed: false,
-  });
-
-  try {
-    const newBooking = await booking.save();
-    res.status(201).json(newBooking);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// booking cancel
-router.delete('/bookings/:id', async (req, res) => {
-  try {
-    const booking = await findById(req.params.id);
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
+    try {
+        const rooms = await Room.find().populate('ratings');
+        res.json(rooms);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch rooms' });
     }
-    await booking.remove();
-    res.status(204).send();
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
 
-// (Check-in)
-router.put('/bookings/:id/checkin', async (req, res) => {
-  try {
-    const booking = await findById(req.params.id);
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
+// Book a room
+router.post('/book', async (req, res) => {
+    const { participantId, roomId, start, end } = req.body;
+
+    try {
+        const booking = new Booking({ participant: participantId, room: roomId, start, end });
+        await booking.save();
+
+        const room = await Room.findById(roomId);
+        room.bookings.push({ start, end });
+        await room.save();
+
+        res.status(201).json({ message: 'Room booked successfully' });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to book room' });
     }
-    booking.confirmed = true;
-
-    const cancelTime = new Date();
-    cancelTime.setHours(cancelTime.getHours() + 1); 
-    booking.cancelTime = cancelTime;
-
-    await booking.save();
-    res.json(booking);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
 });
-app.use('/auth', authRouter); 
-app.use('/api', authMiddleware, apiRouter);
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+
+// Rate a room
+router.post('/rate', async (req, res) => {
+    const { participantId, roomId, rating, comment } = req.body;
+
+    try {
+        const newRating = new Rating({ participant: participantId, room: roomId, rating, comment });
+        await newRating.save();
+
+        const room = await Room.findById(roomId);
+        room.ratings.push(newRating._id);
+        await room.save();
+
+        res.status(201).json({ message: 'Room rated successfully' });
+    } catch (error) {
+        res.status(400).json({ error: 'Failed to rate room' });
+    }
 });
 
 export default router;
-
