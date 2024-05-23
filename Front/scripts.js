@@ -354,35 +354,35 @@ document.addEventListener('DOMContentLoaded', () => {
             usa: {
                 apple: [
                     { id: 1, name: 'Room in Apple office in Los Angeles', rating: 4.5, reviews: 10, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 40 },
-                    { id: 2, name: 'Room in Apple office in Washington', rating: 4.4, reviews: 108, thumbnail: 'OfficeApple2_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple2_1.jpg', 'OfficeApple2_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
-                    { id: 3, name: 'Room in Apple office in Cansas', rating: 4.5, reviews: 23, thumbnail: 'OfficeApple3_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple3_1.jpg', 'OfficeApple3_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 2, name: 'Room in Apple office in Washington', rating: 4.4, reviews: 108, thumbnail: 'OfficeApple2_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 15 осіб', images: ['OfficeApple2_1.jpg', 'OfficeApple2_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 3, name: 'Room in Apple office in Cansas', rating: 4.5, reviews: 23, thumbnail: 'OfficeApple3_1.jpg', description: 'Офіс компанії Apple. Містить місця до 24 осіб та еститичний дизайн', images: ['OfficeApple3_1.jpg', 'OfficeApple3_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 39 },
                 ],
                 blizzard: [
-                    { id: 4, name: 'Room in Blizzard office in New York', rating: 5.0, reviews: 56, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
-                    { id: 5, name: 'Room in Blizzard office in Los Antos', rating: 4.0, reviews: 10, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
-                    { id: 6, name: 'Room in Blizzard office in Vice City', rating: 5.0, reviews: 58, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 4, name: 'Room in Blizzard office in New York', rating: 5.0, reviews: 56, thumbnail: 'OfficeBlizzard1_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard1_1.jpg', 'OfficeBlizzard1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 75 },
+                    { id: 5, name: 'Room in Blizzard office in Los Antos', rating: 4.0, reviews: 10, thumbnail: 'OfficeBlizzard2_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard2_1.jpg', 'OfficeBlizzard2_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 69.99 },
+                    { id: 6, name: 'Room in Blizzard office in Vice City', rating: 5.0, reviews: 58, thumbnail: 'OfficeBlizzard3_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard3_1.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
                 ],
                 microsoft: [
-                    { id: 7, name: 'Room in Microsoft office in Ney Jersey', rating: 4.3, reviews: 3, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
-                    { id: 8, name: 'Room in Microsoft office in May City', rating: 4.5, reviews: 18, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 7, name: 'Room in Microsoft office in Ney Jersey', rating: 4.3, reviews: 3, thumbnail: 'OfficeMicrosoft1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft1_1.jpg', 'OfficeMicrosoft1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 48.99 },
+                    { id: 8, name: 'Room in Microsoft office in May City', rating: 4.5, reviews: 18, thumbnail: 'OfficeMicrosoft2_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft2_1.jpg', 'OfficeMicrosoft2_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 49.99 },
                 ],
                 google: [
-                    { id: 9, name: 'Room in Google office in Washington', rating: 3.9, reviews: 156, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 9, name: 'Room in Google office in Washington', rating: 3.9, reviews: 156, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 9.9 },
                     
                 ],
             },
             germany: {
                 microsoft: [
-                    { id: 10, name: 'Room in Microsoft office in Berlin', rating: 3.3, reviews: 156, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Microsoft. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 10, name: 'Room in Microsoft office in Berlin', rating: 3.3, reviews: 156, thumbnail: 'OfficeMicroft1_1.jpg', description: 'Офіс компанії Microsoft. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft1_1.jpg', 'OfficeMicrosoft1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 45 },
                 ],
                 google: [
-                    { id: 11, name: 'Room in Google office in Bremen', rating: 4.1, reviews: 10, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 11, name: 'Room in Google office in Bremen', rating: 4.1, reviews: 10, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 39.99 },
                     
                 ],
             },
             ukraine: {
                 blizzard: [
-                    { id: 12, name: 'Room in Blizzard office in Kyiv', rating: 4.9, reviews: 13, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Blizzard. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 12, name: 'Room in Blizzard office in Kyiv', rating: 4.9, reviews: 13, thumbnail: 'OfficeBlizzard5_1.jpg', description: 'Офіс компанії Blizzard. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard5_1.jpg', 'OfficeBlizzard5_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 19.99 },
                 ],
                 
             },
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                 ],
                 google: [
-                    { id: 14, name: 'Room in Google office in London', rating: 4.5, reviews: 91, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
+                    { id: 14, name: 'Room in Google office in London', rating: 4.5, reviews: 91, thumbnail: 'OfficeGoogle2_2.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg', 'OfficeGoogle2_2.jpg'], bookings: [{ start: '10:00', end: '11:00' }], price: 50 },
                     
                 ],
                 
