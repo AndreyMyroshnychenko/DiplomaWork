@@ -325,8 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     { id: 6, name: 'Room in Blizzard office in Vice City', rating: 5.0, reviews: 58, thumbnail: 'OfficeBlizzard3_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard3_1.jpg'], price: 50 },
                 ],
                 microsoft: [
-                    { id: 7, name: 'Room in Microsoft office in Ney Jersey', rating: 4.3, reviews: 3, thumbnail: 'OfficeMicrosoft1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft1_1.jpg', 'OfficeMicrosoft1_2.jpg'], price: 48.99 },
-                    { id: 8, name: 'Room in Microsoft office in May City', rating: 4.5, reviews: 18, thumbnail: 'OfficeMicrosoft2_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft2_1.jpg', 'OfficeMicrosoft2_2.jpg'],  price: 49.99 },
+                    { id: 7, name: 'Room in Microsoft office in Ney Jersey', rating: 4.3, reviews: 3, thumbnail: 'OfficeMicrofost1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost1_1.jpg', 'OfficeMicrofost1_2.jpg'], price: 48.99 },
+                    { id: 8, name: 'Room in Microsoft office in May City', rating: 4.5, reviews: 18, thumbnail: 'OfficeMicrofost2_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost2_1.jpg', 'OfficeMicrofost2_2.jpg'],  price: 49.99 },
                 ],
                 google: [
                     { id: 9, name: 'Room in Google office in Washington', rating: 3.9, reviews: 156, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'],  price: 9.9 },
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             germany: {
                 microsoft: [
-                    { id: 10, name: 'Room in Microsoft office in Berlin', rating: 3.3, reviews: 156, thumbnail: 'OfficeMicroft1_1.jpg', description: 'Офіс компанії Microsoft. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrosoft1_1.jpg', 'OfficeMicrosoft1_2.jpg'], price: 45 },
+                    { id: 10, name: 'Room in Microsoft office in Berlin', rating: 3.3, reviews: 156, thumbnail: 'OfficeMicrofost1_1.jpg', description: 'Офіс компанії Microsoft. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost1_1.jpg', 'OfficeMicrofost1_2.jpg'], price: 45 },
                 ],
                 google: [
                     { id: 11, name: 'Room in Google office in Bremen', rating: 4.1, reviews: 10, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'],  price: 39.99 },
