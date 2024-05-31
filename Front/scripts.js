@@ -132,32 +132,35 @@ document.addEventListener('DOMContentLoaded', function() {
 let bookingList;
 let newBooking = null;
 document.addEventListener('DOMContentLoaded', function() {
-
-
     const myBookingsBtn = document.getElementById('myBookingsBtn');
-    bookingList = document.getElementById('bookingList');
+    const bookingList = document.getElementById('bookingList');
     const contextMenu = document.getElementById('contextMenu');
     const editBookingModal = document.getElementById('editBookingModal');
 
-    const storage=localStorage.getItem("bookings");
-    localStorage.setItem("bookings", storage || JSON.stringify([ 
-        { id: 1, title: "Room in Apple office in Los Antos", startTime: "10:00", endTime: "11:00", notes: "Discuss project" },
+    const storedBookings = localStorage.getItem("bookings");
+    const bookings = storedBookings ? JSON.parse(storedBookings) : [
+        { id: 1, title: "Room in Apple office in Los Angeles", startTime: "10:00", endTime: "11:00", notes: "Discuss project" },
         { id: 2, title: "Room in Blizzard office in Vice City", startTime: "14:00", endTime: "15:00", notes: "Progress review with team" },
-        { id: 3, title: "Room in Apple office in Cansas", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
+        { id: 3, title: "Room in Apple office in Kansas", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
         { id: 4, title: "Room in Google office in Washington", startTime: "15:00", endTime: "16:00", notes: "Review progress" },
-        { id: 5, title: "Room in Microsoft office in Berlin", startTime: "18:00", endTime: "17:00", notes: "Review Stefan`s work" },
+        { id: 5, title: "Room in Microsoft office in Berlin", startTime: "18:00", endTime: "17:00", notes: "Review Stefan’s work" },
         { id: 6, title: "Room in Blizzard office in Kyiv", startTime: "11:00", endTime: "12:00", notes: "Review progress" },
         { id: 7, title: "Room in Google office in London", startTime: "16:00", endTime: "17:00", notes: "" },
-    ]));
+    ];
+    localStorage.setItem("bookings", JSON.stringify(bookings));
 
-    myBookingsBtn.addEventListener('click', function() {
-        bookingList.innerHTML = JSON.parse(localStorage.getItem("bookings")).map(booking => `
+    function renderBookings() {
+        bookingList.innerHTML = bookings.map(booking => `
             <div class="booking-item" data-id="${booking.id}">
                 <h3>${booking.title}</h3>
                 <p>Time: ${booking.startTime} - ${booking.endTime}</p>
                 <p>Notes: ${booking.notes}</p>
             </div>
         `).join('');
+    }
+
+    myBookingsBtn.addEventListener('click', function() {
+        renderBookings();
         bookingList.style.display = 'block';
     });
 
@@ -172,25 +175,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    bookingList.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-        bookingList.style.display = 'none';
-        contextMenu.style.display = 'none';
-    });
-
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.context-menu') && !event.target.closest('.booking-item')) {
             contextMenu.style.display = 'none';
         }
     });
 
-    document.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-    });
-
     document.getElementById('editBookingBtn').addEventListener('click', function() {
         const bookingId = contextMenu.dataset.bookingId;
-        const booking = JSON.parse(localStorage.getItem("bookings")).find(b => b.id == bookingId);
+        const booking = bookings.find(b => b.id == bookingId);
         document.getElementById('bookingTitle').value = booking.title;
         document.getElementById('bookingStartTime').value = booking.startTime;
         document.getElementById('bookingEndTime').value = booking.endTime;
@@ -203,16 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cancelBookingBtn').addEventListener('click', function() {
         const bookingId = contextMenu.dataset.bookingId;
         if (confirm("Are you sure you want to cancel this booking?")) {
-            const index = JSON.parse(localStorage.getItem("bookings")).findIndex(b => b.id == bookingId);
-            JSON.parse(localStorage.getItem("bookings")).splice(index, 1);
+            const index = bookings.findIndex(b => b.id == bookingId);
+            bookings.splice(index, 1);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+            renderBookings();
             contextMenu.style.display = 'none';
-            bookingList.innerHTML = JSON.parse(localStorage.getItem("bookings")).map(booking => `
-                <div class="booking-item" data-id="${booking.id}">
-                    <h3>${booking.title}</h3>
-                    <p>Time: ${booking.startTime} - ${booking.endTime}</p>
-                    <p>Notes: ${booking.notes}</p>
-                </div>
-            `).join('');
         } else {
             contextMenu.style.display = 'none';
         }
@@ -220,23 +208,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('confirmEditBtn').addEventListener('click', function() {
         const bookingId = editBookingModal.dataset.bookingId;
-        const booking = JSON.parse(localStorage.getItem("bookings")).find(b => b.id == bookingId);
+        const booking = bookings.find(b => b.id == bookingId);
         booking.title = document.getElementById('bookingTitle').value;
         booking.startTime = document.getElementById('bookingStartTime').value;
         booking.endTime = document.getElementById('bookingEndTime').value;
         booking.notes = document.getElementById('bookingNotes').value;
+        localStorage.setItem("bookings", JSON.stringify(bookings));
         editBookingModal.style.display = 'none';
-        bookingList.innerHTML = JSON.parse(localStorage.getItem("bookings")).map(booking => `
-            <div class="booking-item" data-id="${booking.id}">
-                <h3>${booking.title}</h3>
-                <p>Time: ${booking.startTime} - ${booking.endTime}</p>
-                <p>Notes: ${booking.notes}</p>
-            </div>
-        `).join('');
+        renderBookings();
     });
 
     document.getElementById('cancelEditBtn').addEventListener('click', function() {
         editBookingModal.style.display = 'none';
+    });
+
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        bookingList.style.display = 'none';
     });
 });
 
