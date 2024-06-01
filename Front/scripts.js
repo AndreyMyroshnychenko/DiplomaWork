@@ -133,7 +133,7 @@ let bookingList;
 let newBooking = null;
 document.addEventListener('DOMContentLoaded', function() {
     const myBookingsBtn = document.getElementById('myBookingsBtn');
-    const bookingList = document.getElementById('bookingList');
+    bookingList = document.getElementById('bookingList');
     const contextMenu = document.getElementById('contextMenu');
     const editBookingModal = document.getElementById('editBookingModal');
 
@@ -392,7 +392,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
         roomDetails.style.display = 'block';
         overlay.style.display = 'block';
+        populateBookingTimes(room);
+
+        
     }
+    function populateBookingTimes(room) {
+    const bookingTimes = room.bookings || [];
+    const availableIntervals = generateIntervals('09:00', '20:00', 60);
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; 
+
+    bookingTime.innerHTML = availableIntervals.map(interval => {
+        const [startTime, endTime] = interval.split(' - '); 
+        const [startHours, startMinutes] = startTime.split(':');
+        const intervalDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
+
+        if (intervalDate < now) {
+            return `<option value="${interval}" disabled>${interval}</option>`;
+        } else {
+            return `<option value="${interval}">${interval}</option>`;
+        }
+    }).join('');
+
+    bookingTimes.forEach(booking => {
+        const startTime = booking.start;
+        const endTime = booking.end;
+
+        const bookedOption = bookingTime.querySelector(`option[value="${startTime} - ${endTime}"]`);
+        if (bookedOption) {
+            bookedOption.disabled = true;
+            bookedOption.textContent += ' (booked)';
+        }
+
+        const [startHour, startMinutes] = startTime.split(':');
+        const [endHour, endMinutes] = endTime.split(':');
+        const oneHourBefore = `${(parseInt(startHour, 10) - 1).toString().padStart(2, '0')}:${startMinutes}`;
+        const oneHourAfter = `${(parseInt(endHour, 10) + 1).toString().padStart(2, '0')}:${endMinutes}`;
+
+        const beforeOption = bookingTime.querySelector(`option[value="${oneHourBefore}"]`);
+        const afterOption = bookingTime.querySelector(`option[value="${oneHourAfter}"]`);
+
+        if (beforeOption) {
+            beforeOption.disabled = true;
+            beforeOption.textContent += ' (unavailable)';
+        }
+        if (afterOption) {
+            afterOption.disabled = true;
+            afterOption.textContent += ' (unavailable)';
+        }
+    });
+}
+
+    function generateIntervals(start, end, interval) {
+        const times = [];
+        let current = new Date();
+        const [startHour, startMinute] = start.split(':').map(Number);
+        const [endHour, endMinute] = end.split(':').map(Number);
+        current.setHours(startHour, startMinute, 0, 0);
+    
+        while (current.getHours() < endHour || (current.getHours() === endHour && current.getMinutes() < endMinute)) {
+            const startTime = current.toTimeString().substring(0, 5);
+            current.setMinutes(current.getMinutes() + interval);
+            const endTime = current.toTimeString().substring(0, 5);
+            times.push(`${startTime} - ${endTime}`);
+        }
+    
+        return times;
+    }
+
     document.addEventListener('click', (event) => {
         const roomDetails = document.getElementById('roomDetails');
         const overlay = document.getElementById('overlay');
