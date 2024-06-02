@@ -151,32 +151,10 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsDataURL(file);
     });
 });
-async function fetchBookings() {
-    const response = await fetch(`${baseUrl}/bookings`);
-    const bookings = await response.json();
-    return bookings;
-}
 
 
-async function updateBooking(id, updatedBookingData) {
-    const response = await fetch(`${baseUrl}/bookings/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedBookingData)
-    });
-    const data = await response.json();
-    return data;
-}
 
-async function deleteBooking(id) {
-    const response = await fetch(`${baseUrl}/bookings/${id}`, {
-        method: 'DELETE'
-    });
-    const data = await response.json();
-    return data;
-}
+
 let bookingList;
 let newBooking = null;
 document.addEventListener('DOMContentLoaded', function() {
@@ -229,6 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    
     document.getElementById('editBookingBtn').addEventListener('click', function() {
         const bookingId = contextMenu.dataset.bookingId;
         const booking = bookings.find(b => b.id == bookingId);
@@ -241,37 +220,61 @@ document.addEventListener('DOMContentLoaded', function() {
         contextMenu.style.display = 'none';
     });
 
+    async function deleteBooking(bookingId) {
+        const response = await fetch(`${baseUrl}/api/bookings/${bookingId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log(data);
+        return data;
+    }
+    
     document.getElementById('cancelBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
         if (confirm("Are you sure you want to cancel this booking?")) {
-            try {
-                const response = await fetch(`${baseUrl}/bookings/${bookingId}`, {
-                    method: 'DELETE'
-                });
-                if (response.ok) {
-                    const index = bookings.findIndex(b => b.id == bookingId);
-                    bookings.splice(index, 1);
-                    localStorage.setItem("bookings", JSON.stringify(bookings));
-                    renderBookings();
-                    contextMenu.style.display = 'none';
-                } else {
-                    console.error('Failed to cancel booking:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error cancelling booking:', error.message);
-            }
+            const index = bookings.findIndex(b => b.id == bookingId);
+            bookings.splice(index, 1);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+            renderBookings();
+            deleteBooking();
+            contextMenu.style.display = 'none';
         } else {
             contextMenu.style.display = 'none';
         }
+
     });
 
+    async function updateBooking(bookingId, updatedData) {
+        const response = await fetch(`${baseUrl}/bookings/${bookingId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData)
+        });
+    
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+    
+        const data = await response.json();
+        return data;
+    }
+    
     document.getElementById('confirmEditBtn').addEventListener('click', async function() {
-        const id = editBookingModal.dataset.id;
-        const booking = bookings.find(b => b.id == id);
-        booking.title = document.getElementById('bookingTitle').value;
-        booking.startTime = document.getElementById('bookingStartTime').value;
-        booking.endTime = document.getElementById('bookingEndTime').value;
-        booking.notes = document.getElementById('bookingNotes').value;
+        const id = editBookingModal.dataset.bookingId;
+        const updatedBooking = {
+            title: document.getElementById('bookingTitle').value,
+            start_time: document.getElementById('bookingStartTime').value,
+            end_time: document.getElementById('bookingEndTime').value,
+            notes: document.getElementById('bookingNotes').value,
+            participant_id: localStorage.getItem("username"), // Assuming participant_id is the username
+            room_name: contextMenu.dataset.roomName // Assuming room name is stored in dataset
+        };
     
         try {
             const response = await fetch(`${baseUrl}/bookings/${id}`, {
@@ -279,20 +282,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(booking)
+                body: JSON.stringify(updatedBooking)
             });
-            if (response.ok) {
-                localStorage.setItem("bookings", JSON.stringify(bookings));
-                editBookingModal.style.display = 'none';
-                renderBookings();
-            } else {
-                console.error('Failed to update booking:', response.statusText);
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(JSON.stringify(errorData));
             }
+    
+            const data = await response.json();
+            console.log('Booking updated:', data);
+    
+            // Update local storage
+            const bookings = JSON.parse(localStorage.getItem("bookings"));
+            const bookingIndex = bookings.findIndex(b => b.id == id);
+            if (bookingIndex !== -1) {
+                bookings[bookingIndex] = { ...bookings[bookingIndex], ...updatedBooking };
+                localStorage.setItem("bookings", JSON.stringify(bookings));
+            }
+    
+            editBookingModal.style.display = 'none';
+            renderBookings();
         } catch (error) {
-            console.error('Error updating booking:', error.message);
+            console.error('Error updating booking:', error);
+            alert('Failed to update booking. Please try again.');
         }
     });
-
+    
     document.getElementById('cancelEditBtn').addEventListener('click', function() {
         editBookingModal.style.display = 'none';
     });

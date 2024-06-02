@@ -117,16 +117,46 @@ app.post('/api/bookings', async (req, res) => {
 
 
 app.put('/api/bookings/:id', async (req, res) => {
-    const id = req.params.id;
-    const updatedBooking = req.body;
+    const bookingId = req.params.id;
+    const updatedData = req.body;
+
     try {
+        const { data: participantsData, error: participantsError } = await supabase
+            .from('Participant')
+            .select('id')
+            .ilike('name', updatedData.participant_id);
+
+        if (participantsError || participantsData.length === 0) {
+            return res.status(404).json({ error: 'Participant not found' });
+        }
+
+        const { data: roomData, error: roomError } = await supabase
+            .from('Room')
+            .select('id')
+            .ilike('name', updatedData.room_name);
+
+        if (roomError || roomData.length === 0) {
+            return res.status(404).json({ error: 'Room not found' });
+        }
+
+        const participantId = participantsData[0].id;
+        const roomId = roomData[0].id;
+
         const { data, error } = await supabase
             .from('Booking')
-            .update(updatedBooking)
-            .eq('id', id);
+            .update({ 
+                notes: updatedData.notes, 
+                start_time: updatedData.start_time, 
+                end_time: updatedData.end_time, 
+                participant_id: participantId, 
+                room_id: roomId 
+            })
+            .eq('id', bookingId);
+
         if (error) {
             return res.status(500).json({ error: error.message });
         }
+
         res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -134,16 +164,19 @@ app.put('/api/bookings/:id', async (req, res) => {
 });
 
 app.delete('/api/bookings/:id', async (req, res) => {
-    const id = req.params.id;
+    const bookingId = req.params.id;
+
     try {
         const { data, error } = await supabase
             .from('Booking')
             .delete()
-            .eq('id', id);
+            .eq('id', bookingId);
+
         if (error) {
             return res.status(500).json({ error: error.message });
         }
-        res.json(data);
+
+        res.json({ message: 'Booking deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
