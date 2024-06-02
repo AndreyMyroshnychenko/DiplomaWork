@@ -1,3 +1,4 @@
+
 function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -9,7 +10,43 @@ function makeid(length) {
     }
     return result;
 }
+const baseUrl = 'http://localhost:3000/api';
 var currentStash=undefined;
+async function login(username, password) {
+    const response = await fetch(`${baseUrl}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+        localStorage.setItem('username', data.username);
+        window.location.href = 'mainPage.html';
+    } else {
+        alert(data.error);
+    }
+}
+async function signup(username, email, password) {
+    const response = await fetch(`${baseUrl}/signup`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, email, password })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+        localStorage.setItem('username', data.user.name);
+        window.location.href = 'mainPage.html';
+    } else {
+        console.error('Registration failed:', data.error);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
@@ -17,42 +54,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
-
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
-
-            if (username && password) {
-                localStorage.setItem('username', username);
-                localStorage.setItem('password', password); 
-                window.location.href = 'mainPage.html';
-            }
+            login(username, password);
         });
     }
 
     if (signupForm) {
         signupForm.addEventListener('submit', function(event) {
             event.preventDefault();
-
             const usernameInput = document.getElementById('username');
+            const emailInput = document.getElementById('email'); 
             const passwordInput = document.getElementById('password');
             const username = usernameInput.value.trim();
+            const email = emailInput.value.trim(); 
             const password = passwordInput.value.trim();
-
-            const storedPassword = localStorage.getItem('password');
-
-            if (password === storedPassword) {
-                alert('Цей пароль уже використовується. Введіть інший пароль.');
-            } else {
-                if (username && password) {
-                    localStorage.setItem('username', username);
-                    localStorage.setItem('password', password); 
-                    window.location.href = 'mainPage.html';
-                }
-            }
+            signup(username, email, password); 
         });
     }
+    
 
     const userGreetingLink = document.getElementById('userGreetingLink');
     const loginLink = document.getElementById('loginLink');
@@ -84,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
 document.getElementById('logoutButton').addEventListener('click', function(){
     localStorage.removeItem('username'); 
     window.location.href = 'mainPage.html'
@@ -128,7 +151,32 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.readAsDataURL(file);
     });
 });
+async function fetchBookings() {
+    const response = await fetch(`${baseUrl}/bookings`);
+    const bookings = await response.json();
+    return bookings;
+}
 
+
+async function updateBooking(id, updatedBookingData) {
+    const response = await fetch(`${baseUrl}/bookings/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedBookingData)
+    });
+    const data = await response.json();
+    return data;
+}
+
+async function deleteBooking(id) {
+    const response = await fetch(`${baseUrl}/bookings/${id}`, {
+        method: 'DELETE'
+    });
+    const data = await response.json();
+    return data;
+}
 let bookingList;
 let newBooking = null;
 document.addEventListener('DOMContentLoaded', function() {
@@ -143,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 2, title: "Room in Blizzard office in Vice City", startTime: "14:00", endTime: "15:00", notes: "Progress review with team" },
         { id: 3, title: "Room in Apple office in Kansas", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
         { id: 4, title: "Room in Google office in Washington", startTime: "15:00", endTime: "16:00", notes: "Review progress" },
-        { id: 5, title: "Room in Microsoft office in Berlin", startTime: "18:00", endTime: "17:00", notes: "Review Stefan’s work" },
+        { id: 5, title: "Room in Microsoft office in Berlin", startTime: "17:00", endTime: "18:00", notes: "Review Stefan’s work" },
         { id: 6, title: "Room in Blizzard office in Kyiv", startTime: "11:00", endTime: "12:00", notes: "Review progress" },
         { id: 7, title: "Room in Google office in London", startTime: "16:00", endTime: "17:00", notes: "" },
     ];
@@ -193,29 +241,56 @@ document.addEventListener('DOMContentLoaded', function() {
         contextMenu.style.display = 'none';
     });
 
-    document.getElementById('cancelBookingBtn').addEventListener('click', function() {
+    document.getElementById('cancelBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
         if (confirm("Are you sure you want to cancel this booking?")) {
-            const index = bookings.findIndex(b => b.id == bookingId);
-            bookings.splice(index, 1);
-            localStorage.setItem("bookings", JSON.stringify(bookings));
-            renderBookings();
-            contextMenu.style.display = 'none';
+            try {
+                const response = await fetch(`${baseUrl}/bookings/${bookingId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    const index = bookings.findIndex(b => b.id == bookingId);
+                    bookings.splice(index, 1);
+                    localStorage.setItem("bookings", JSON.stringify(bookings));
+                    renderBookings();
+                    contextMenu.style.display = 'none';
+                } else {
+                    console.error('Failed to cancel booking:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error cancelling booking:', error.message);
+            }
         } else {
             contextMenu.style.display = 'none';
         }
     });
 
-    document.getElementById('confirmEditBtn').addEventListener('click', function() {
-        const bookingId = editBookingModal.dataset.bookingId;
-        const booking = bookings.find(b => b.id == bookingId);
+    document.getElementById('confirmEditBtn').addEventListener('click', async function() {
+        const id = editBookingModal.dataset.id;
+        const booking = bookings.find(b => b.id == id);
         booking.title = document.getElementById('bookingTitle').value;
         booking.startTime = document.getElementById('bookingStartTime').value;
         booking.endTime = document.getElementById('bookingEndTime').value;
         booking.notes = document.getElementById('bookingNotes').value;
-        localStorage.setItem("bookings", JSON.stringify(bookings));
-        editBookingModal.style.display = 'none';
-        renderBookings();
+    
+        try {
+            const response = await fetch(`${baseUrl}/bookings/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(booking)
+            });
+            if (response.ok) {
+                localStorage.setItem("bookings", JSON.stringify(bookings));
+                editBookingModal.style.display = 'none';
+                renderBookings();
+            } else {
+                console.error('Failed to update booking:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error updating booking:', error.message);
+        }
     });
 
     document.getElementById('cancelEditBtn').addEventListener('click', function() {
@@ -229,146 +304,94 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const companyModal = document.getElementById('companyModal');
-    const companyForm = document.getElementById('companyForm');
-    const roomsContainer = document.getElementById('roomsContainer');
-    const roomDetails = document.getElementById('roomDetails');
-    const overlay = document.getElementById('overlay');
-    const roomTitle = document.getElementById('roomTitle');
-    const roomDescription = document.getElementById('roomDescription');
-    const roomImage = document.getElementById('roomImage');
-    const bookingTime = document.getElementById('bookingTime');
-    const closeDetails = document.getElementById('closeDetails');
-    const errorMessage = document.getElementById('error-message');
-    const note = document.getElementById('note');
-    const prevImage = document.getElementById('prevImage');
-    const nextImage = document.getElementById('nextImage');
-    const bookRoomButton = document.getElementById('bookRoom');
-
     const companiesByCountry = {
-        usa: ['apple', 'blizzard', 'microsoft', 'google'],
+        usa: ['apple', 'google', 'microsoft', 'blizzard'],
         germany: ['microsoft', 'google'],
         ukraine: ['blizzard'],
         uk: ['apple', 'google']
     };
 
-    companyForm.addEventListener('submit', (event) => {
+    const companyForm = document.getElementById('companyForm');
+    const roomTitle = document.getElementById('roomTitle');
+    const roomDescription = document.getElementById('roomDescription');
+    const roomImage = document.getElementById('roomImage');
+    const prevImage = document.getElementById('prevImage');
+    const nextImage = document.getElementById('nextImage');
+    const bookingTime = document.getElementById('bookingTime');
+    const note = document.getElementById('note');
+    const bookRoomButton = document.getElementById('bookRoom');
+    const roomDetails = document.getElementById('roomDetails');
+    const overlay = document.getElementById('overlay');
+    const errorMessage = document.getElementById('error-message');
+    const roomsContainer = document.getElementById('roomsContainer');
+    const closeDetailsButton = document.getElementById('closeDetails');
+
+    companyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const selectedCompany = document.getElementById('company').value;
         const selectedCountry = document.getElementById('country').value;
-    
-        if (companiesByCountry[selectedCountry].includes(selectedCompany)) {
-            companyModal.style.display = 'none';
-            roomsContainer.style.display = 'block';
-            displayRooms(selectedCompany, selectedCountry);
+
+        if (companiesByCountry[selectedCountry] && companiesByCountry[selectedCountry].includes(selectedCompany)) {
+            try {
+                const response = await fetch(`/api/rooms?company=${selectedCompany}&country=${selectedCountry}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch rooms');
+                }
+                const rooms = await response.json();
+                displayRooms(rooms, selectedCompany, selectedCountry);
+                roomsContainer.style.display = 'block';
+                companyForm.style.display = 'none'; 
+            } catch (error) {
+                console.error(error);
+                errorMessage.textContent = 'Failed to fetch rooms';
+            }
         } else {
             errorMessage.textContent = 'The selected company does not have offices in the selected country.';
         }
     });
 
-    function displayRooms(company, country) {
+    
+    function displayRooms(rooms) {
         const roomList = document.querySelector('.room-list');
+
         roomList.innerHTML = '';
-        const rooms = getRooms(company, country);
-        rooms.sort((a, b) => {
-            if (a.rating !== b.rating) {
-                return b.rating - a.rating;
-            } else {
-                return b.reviews - a.reviews;
-            }
-        });
         rooms.forEach(room => {
             const roomElement = document.createElement('li');
             roomElement.classList.add('room-item');
             roomElement.setAttribute('data-room-id', room.id);
-    
+
             const roomContent = `
                 <h4>${room.name}</h4>
-                <img src="../images/${room.thumbnail}" alt="Room Image" width="100">
+                <img src="${room.thumbnail}" alt="Room Image" width="100">
                 <span class="room-rating">Rating: ${room.rating} (${room.reviews} reviews)</span>
                 <span class="room-price">$${room.price}/hour</span>
             `;
             roomElement.innerHTML = roomContent;
-    
+
             roomElement.addEventListener('click', () => {
                 showRoomDetails(room);
             });
-    
+
             roomList.appendChild(roomElement);
         });
-    
-    }
-    function getRooms(company, country) {
-        // fetch this from a server in a real app
-        const availableRooms = {
-            usa: {
-                apple: [
-                    { id: 1, name: 'Room in Apple office in Los Angeles', rating: 4.5, reviews: 10, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], price: 40 },
-                    { id: 2, name: 'Room in Apple office in Washington', rating: 4.4, reviews: 108, thumbnail: 'OfficeApple2_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 15 осіб', images: ['OfficeApple2_1.jpg', 'OfficeApple2_2.jpg'],  price: 50 },
-                    { id: 3, name: 'Room in Apple office in Cansas', rating: 4.5, reviews: 23, thumbnail: 'OfficeApple3_1.jpg', description: 'Офіс компанії Apple. Містить місця до 24 осіб та еститичний дизайн', images: ['OfficeApple3_1.jpg', 'OfficeApple3_2.jpg'],  price: 39 },
-                ],
-                blizzard: [
-                    { id: 4, name: 'Room in Blizzard office in New York', rating: 5.0, reviews: 56, thumbnail: 'OfficeBlizzard1_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard1_1.jpg', 'OfficeBlizzard1_2.jpg'], price: 75 },
-                    { id: 5, name: 'Room in Blizzard office in Los Antos', rating: 4.0, reviews: 10, thumbnail: 'OfficeBlizzard2_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard2_1.jpg', 'OfficeBlizzard2_2.jpg'], price: 69.99 },
-                    { id: 6, name: 'Room in Blizzard office in Vice City', rating: 5.0, reviews: 58, thumbnail: 'OfficeBlizzard3_1.jpg', description: 'Офіс компанії Бліззард. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard3_1.jpg'], price: 50 },
-                ],
-                microsoft: [
-                    { id: 7, name: 'Room in Microsoft office in Ney Jersey', rating: 4.3, reviews: 3, thumbnail: 'OfficeMicrofost1_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost1_1.jpg', 'OfficeMicrofost1_2.jpg'], price: 48.99 },
-                    { id: 8, name: 'Room in Microsoft office in May City', rating: 4.5, reviews: 18, thumbnail: 'OfficeMicrofost2_1.jpg', description: 'Офіс компанії Майкрософт. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost2_1.jpg', 'OfficeMicrofost2_2.jpg'],  price: 49.99 },
-                ],
-                google: [
-                    { id: 9, name: 'Room in Google office in Washington', rating: 3.9, reviews: 156, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'],  price: 9.9 },
-                    
-                ],
-            },
-            germany: {
-                microsoft: [
-                    { id: 10, name: 'Room in Microsoft office in Berlin', rating: 3.3, reviews: 156, thumbnail: 'OfficeMicrofost1_1.jpg', description: 'Офіс компанії Microsoft. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeMicrofost1_1.jpg', 'OfficeMicrofost1_2.jpg'], price: 45 },
-                ],
-                google: [
-                    { id: 11, name: 'Room in Google office in Bremen', rating: 4.1, reviews: 10, thumbnail: 'OfficeGoogle1_1.jpg', description: 'Офіс компанії Google. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg'],  price: 39.99 },
-                    
-                ],
-            },
-            ukraine: {
-                blizzard: [
-                    { id: 12, name: 'Room in Blizzard office in Kyiv', rating: 4.9, reviews: 13, thumbnail: 'OfficeBlizzard5_1.jpg', description: 'Офіс компанії Blizzard. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeBlizzard5_1.jpg', 'OfficeBlizzard5_2.jpg'], price: 19.99 },
-                ],
-                
-            },
-            uk: {
-                apple: [
-                    { id: 13, name: 'Room in Apple office in London', rating: 4.8, reviews: 199, thumbnail: 'OfficeApple1_1.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeApple1_1.jpg', 'OfficeApple1_2.jpg'], price: 50 },
-                    
-                ],
-                google: [
-                    { id: 14, name: 'Room in Google office in London', rating: 4.5, reviews: 91, thumbnail: 'OfficeGoogle2_2.jpg', description: 'Офіс компанії Apple. Містить інтерактивний екран та місця до 20 осіб', images: ['OfficeGoogle1_1.jpg', 'OfficeGoogle2_2.jpg'], price: 50 },
-                    
-                ],
-                
-            },
-            
-        };
-        const rooms = availableRooms[country][company];
-    return rooms;
-
     }
     function showRoomDetails(room) {
         let currentImageIndex = 0;
+        const baseImageUrl = '';
 
         roomTitle.textContent = room.name;
         roomDescription.textContent = room.description;
-        roomImage.src = `../images/${room.images[currentImageIndex]}`;
+        roomImage.src = `${room.images[currentImageIndex]}`;
 
-        prevImage.addEventListener('click', () => {
+        prevImage.onclick = () => {
             currentImageIndex = (currentImageIndex > 0) ? currentImageIndex - 1 : room.images.length - 1;
-            roomImage.src = `../images/${room.images[currentImageIndex]}`;
-        });
-
-        nextImage.addEventListener('click', () => {
+            roomImage.src = `${baseImageUrl}${room.images[currentImageIndex]}`;
+            
+        };
+        nextImage.onclick = () => {
             currentImageIndex = (currentImageIndex < room.images.length - 1) ? currentImageIndex + 1 : 0;
-            roomImage.src = `../images/${room.images[currentImageIndex]}`;
-        });
+            roomImage.src = `${baseImageUrl}${room.images[currentImageIndex]}`;
+        };
 
         bookingTime.innerHTML = '';
         for (let hour = 9; hour < 20; hour++) {
@@ -380,68 +403,77 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = optionText;
             bookingTime.appendChild(option);
         }
-        note.value = ''; 
-        note.style.display = 'block'; 
+        note.value = '';
 
-
-        bookRoomButton.addEventListener('click', () => {
-            currentStash={...currentStash, notes:note.value, startTime:document.getElementById('bookingTime').value.split(' - ')[0], 
-            endTime:document.getElementById('bookingTime').value.split(' - ')[1], title:room.name, id:makeid(5)};
+        bookRoomButton.onclick = () => {
+            currentStash = {
+                ...currentStash,
+                notes: note.value,
+                startTime: document.getElementById('bookingTime').value.split(' - ')[0],
+                endTime: document.getElementById('bookingTime').value.split(' - ')[1],
+                title: room.name,
+                id: makeid(5)
+            };
             redirectToPaymentForm(room);
-        });
+        };
 
         roomDetails.style.display = 'block';
         overlay.style.display = 'block';
         populateBookingTimes(room);
-
-        
     }
-    function populateBookingTimes(room) {
-    const bookingTimes = room.bookings || [];
-    const availableIntervals = generateIntervals('09:00', '20:00', 60);
-    const now = new Date();
-    const today = now.toISOString().split('T')[0]; 
 
-    bookingTime.innerHTML = availableIntervals.map(interval => {
-        const [startTime, endTime] = interval.split(' - '); 
-        const [startHours, startMinutes] = startTime.split(':');
-        const intervalDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
+    closeDetailsButton.onclick = () => {
+        roomDetails.style.display = 'none';
+        overlay.style.display = 'none';
+    };
+    
+    
+//     function populateBookingTimes(room) {
+//     const bookingTimes = room.bookings || [];
+//     const availableIntervals = generateIntervals('09:00', '20:00', 60);
+//     const now = new Date();
+//     const today = now.toISOString().split('T')[0]; 
 
-        if (intervalDate < now) {
-            return `<option value="${interval}" disabled>${interval}</option>`;
-        } else {
-            return `<option value="${interval}">${interval}</option>`;
-        }
-    }).join('');
+//     bookingTime.innerHTML = availableIntervals.map(interval => {
+//         const [startTime, endTime] = interval.split(' - '); 
+//         const [startHours, startMinutes] = startTime.split(':');
+//         const intervalDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
 
-    bookingTimes.forEach(booking => {
-        const startTime = booking.start;
-        const endTime = booking.end;
+//         if (intervalDate < now) {
+//             return `<option value="${interval}" disabled>${interval}</option>`;
+//         } else {
+//             return `<option value="${interval}">${interval}</option>`;
+//         }
+//     }).join('');
 
-        const bookedOption = bookingTime.querySelector(`option[value="${startTime} - ${endTime}"]`);
-        if (bookedOption) {
-            bookedOption.disabled = true;
-            bookedOption.textContent += ' (booked)';
-        }
+//     bookingTimes.forEach(booking => {
+//         const startTime = booking.start;
+//         const endTime = booking.end;
 
-        const [startHour, startMinutes] = startTime.split(':');
-        const [endHour, endMinutes] = endTime.split(':');
-        const oneHourBefore = `${(parseInt(startHour, 10) - 1).toString().padStart(2, '0')}:${startMinutes}`;
-        const oneHourAfter = `${(parseInt(endHour, 10) + 1).toString().padStart(2, '0')}:${endMinutes}`;
+//         const bookedOption = bookingTime.querySelector(`option[value="${startTime} - ${endTime}"]`);
+//         if (bookedOption) {
+//             bookedOption.disabled = true;
+//             bookedOption.textContent += ' (booked)';
+//         }
 
-        const beforeOption = bookingTime.querySelector(`option[value="${oneHourBefore}"]`);
-        const afterOption = bookingTime.querySelector(`option[value="${oneHourAfter}"]`);
+//         const [startHour, startMinutes] = startTime.split(':');
+//         const [endHour, endMinutes] = endTime.split(':');
+//         const oneHourBefore = `${(parseInt(startHour, 10) - 1).toString().padStart(2, '0')}:${startMinutes}`;
+//         const oneHourAfter = `${(parseInt(endHour, 10) + 1).toString().padStart(2, '0')}:${endMinutes}`;
 
-        if (beforeOption) {
-            beforeOption.disabled = true;
-            beforeOption.textContent += ' (unavailable)';
-        }
-        if (afterOption) {
-            afterOption.disabled = true;
-            afterOption.textContent += ' (unavailable)';
-        }
-    });
-}
+//         const beforeOption = bookingTime.querySelector(`option[value="${oneHourBefore}"]`);
+//         const afterOption = bookingTime.querySelector(`option[value="${oneHourAfter}"]`);
+
+//         if (beforeOption) {
+//             beforeOption.disabled = true;
+//             beforeOption.textContent += ' (unavailable)';
+//         }
+//         if (afterOption) {
+//             afterOption.disabled = true;
+//             afterOption.textContent += ' (unavailable)';
+//         }
+//     });
+// }
 
     function generateIntervals(start, end, interval) {
         const times = [];
@@ -485,7 +517,18 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     
         document.body.innerHTML = paymentForm;
-    
+        async function createBooking(bookingData) {
+            const response = await fetch(`${baseUrl}/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookingData)
+            });
+            const data = await response.json();
+            console.log(data);
+            return data;
+        }
         document.getElementById('payButton').addEventListener('click', () => {
             const cardNumber = document.getElementById('cardNumber').value;
             const cvc = document.getElementById('cardCVC').value;
@@ -505,9 +548,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             localStorage.setItem("bookings",JSON.stringify([currentStash, ...JSON.parse(localStorage.getItem("bookings"))]));
+            createBooking({room_name:currentStash.title, participant_id:localStorage.getItem("username"), 
+                start_time:currentStash.startTime, end_time:currentStash.endTime, notes:currentStash.notes});
             currentStash=undefined;
             alert('Payment Successful');
-            redirectToBookingPage();
+
+            redirectToMainPage();
         });
     }
     function validateCardNumber(cardNumber) {
@@ -535,8 +581,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
-    function redirectToBookingPage(){
-        window.location.href = 'bookingRoom.html';
+    function redirectToMainPage(){
+        window.location.href = 'mainPage.html';
     }
 
     closeDetails.addEventListener('click', () => {
