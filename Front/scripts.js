@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
 let bookingList;
 let newBooking = null;
 document.addEventListener('DOMContentLoaded', function() {
@@ -163,33 +164,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const contextMenu = document.getElementById('contextMenu');
     const editBookingModal = document.getElementById('editBookingModal');
 
-    const storedBookings = localStorage.getItem("bookings");
-    const bookings = storedBookings ? JSON.parse(storedBookings) : [
-        { id: 1, title: "Room in Apple office in Los Angeles", startTime: "10:00", endTime: "11:00", notes: "Discuss project" },
-        { id: 2, title: "Room in Blizzard office in Vice City", startTime: "14:00", endTime: "15:00", notes: "Progress review with team" },
-        { id: 3, title: "Room in Apple office in Kansas", startTime: "16:00", endTime: "17:00", notes: "Review progress" },
-        { id: 4, title: "Room in Google office in Washington", startTime: "15:00", endTime: "16:00", notes: "Review progress" },
-        { id: 5, title: "Room in Microsoft office in Berlin", startTime: "17:00", endTime: "18:00", notes: "Review Stefan’s work" },
-        { id: 6, title: "Room in Blizzard office in Kyiv", startTime: "11:00", endTime: "12:00", notes: "Review progress" },
-        { id: 7, title: "Room in Google office in London", startTime: "16:00", endTime: "17:00", notes: "" },
-    ];
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    function renderBookings() {
+    async function fetchBookings(username) {
+        try {
+            const response = await fetch(`${baseUrl}/bookings/${username}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const bookings = await response.json();
+            renderBookings(bookings);
+            return bookings;
+        } catch (error) {
+            console.error('Failed to fetch bookings:', error);
+        }
+    }
+    
+    function renderBookings(bookings=[]) {
         bookingList.innerHTML = bookings.map(booking => `
             <div class="booking-item" data-id="${booking.id}">
-                <h3>${booking.title}</h3>
-                <p>Time: ${booking.startTime} - ${booking.endTime}</p>
+                <h3>${booking.Room.name}</h3>
+                <p>Time: ${booking.start_time} - ${booking.end_time}</p>
                 <p>Notes: ${booking.notes}</p>
             </div>
         `).join('');
+        
     }
+    fetchBookings(localStorage.getItem('username'));
 
     myBookingsBtn.addEventListener('click', function() {
-        renderBookings();
+        fetchBookings(localStorage.getItem('username'));
         bookingList.style.display = 'block';
-    });
-
+    })
     bookingList.addEventListener('click', function(event) {
         if (event.target.closest('.booking-item')) {
             const bookingItem = event.target.closest('.booking-item');
@@ -208,45 +213,59 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     
-    document.getElementById('editBookingBtn').addEventListener('click', function() {
+    document.getElementById('editBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
-        const booking = bookings.find(b => b.id == bookingId);
-        document.getElementById('bookingTitle').value = booking.title;
-        document.getElementById('bookingStartTime').value = booking.startTime;
-        document.getElementById('bookingEndTime').value = booking.endTime;
+        const bookings= await fetchBookings(localStorage.getItem('username'));
+        const booking = bookings.find(item=>item.id=bookingId);
+        console.log(contextMenu.dataset);
+        document.getElementById('bookingTitle').value = booking.Room.name;
+        document.getElementById('bookingStartTime').value = booking.start_time;
+        document.getElementById('bookingEndTime').value = booking.end_time;
         document.getElementById('bookingNotes').value = booking.notes;
         editBookingModal.dataset.bookingId = booking.id;
         editBookingModal.style.display = 'block';
         contextMenu.style.display = 'none';
     });
 
-    async function deleteBooking(bookingId) {
-        const response = await fetch(`${baseUrl}/api/bookings/${bookingId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        console.log(data);
-        return data;
+    async function deleteBooking(id) {
+        try {
+            const response = await fetch(`${baseUrl}/bookings/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+        } catch (error) {
+            console.error('Error deleting booking:', error);
+            throw new Error('Failed to delete booking');
+        }
     }
     
     document.getElementById('cancelBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
+
+        // const booking = bookings.find(b => b.id == bookingId);
         if (confirm("Are you sure you want to cancel this booking?")) {
-            const index = bookings.findIndex(b => b.id == bookingId);
-            bookings.splice(index, 1);
-            localStorage.setItem("bookings", JSON.stringify(bookings));
-            renderBookings();
-            deleteBooking();
-            contextMenu.style.display = 'none';
+            // const index = bookings.findIndex(b => b.id == bookingId);
+            // bookings.splice(index, 1);
+            // localStorage.setItem("bookings", JSON.stringify(bookings));
+            
+            // console.log(booking.id)
+    
+            // console.log('Booking to delete:', bookingToDelete);
+    
+            await deleteBooking(bookingId); 
+            
+          
+            // contextMenu.style.display = 'none';
         } else {
-            contextMenu.style.display = 'none';
+            // contextMenu.style.display = 'none';
         }
-
+        fetchBookings(localStorage.getItem('username'));
     });
-
+    
+    
     async function updateBooking(bookingId, updatedData) {
         const response = await fetch(`${baseUrl}/bookings/${bookingId}`, {
             method: 'PUT',
@@ -268,12 +287,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('confirmEditBtn').addEventListener('click', async function() {
         const id = editBookingModal.dataset.bookingId;
         const updatedBooking = {
-            title: document.getElementById('bookingTitle').value,
             start_time: document.getElementById('bookingStartTime').value,
             end_time: document.getElementById('bookingEndTime').value,
             notes: document.getElementById('bookingNotes').value,
-            participant_id: localStorage.getItem("username"), // Assuming participant_id is the username
-            room_name: contextMenu.dataset.roomName // Assuming room name is stored in dataset
         };
     
         try {
@@ -291,9 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
     
             const data = await response.json();
-            console.log('Booking updated:', data);
     
-            // Update local storage
             const bookings = JSON.parse(localStorage.getItem("bookings"));
             const bookingIndex = bookings.findIndex(b => b.id == id);
             if (bookingIndex !== -1) {
@@ -302,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
     
             editBookingModal.style.display = 'none';
-            renderBookings();
+            fetchBookings(localStorage.getItem('username'));
         } catch (error) {
             console.error('Error updating booking:', error);
             alert('Failed to update booking. Please try again.');
@@ -369,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function displayRooms(rooms) {
         const roomList = document.querySelector('.room-list');
-
+        const companyModal=document.getElementById('companyModal')
         roomList.innerHTML = '';
         rooms.forEach(room => {
             const roomElement = document.createElement('li');
@@ -389,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             roomList.appendChild(roomElement);
+            companyModal.style.display='none';
         });
     }
     function showRoomDetails(room) {
@@ -444,52 +459,52 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     
-//     function populateBookingTimes(room) {
-//     const bookingTimes = room.bookings || [];
-//     const availableIntervals = generateIntervals('09:00', '20:00', 60);
-//     const now = new Date();
-//     const today = now.toISOString().split('T')[0]; 
+    function populateBookingTimes(room) {
+    const bookingTimes = room.bookings || [];
+    const availableIntervals = generateIntervals('09:00', '23:00', 60);
+    const now = new Date();
+    const today = now.toISOString().split('T')[0]; 
 
-//     bookingTime.innerHTML = availableIntervals.map(interval => {
-//         const [startTime, endTime] = interval.split(' - '); 
-//         const [startHours, startMinutes] = startTime.split(':');
-//         const intervalDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
+    bookingTime.innerHTML = availableIntervals.map(interval => {
+        const [startTime, endTime] = interval.split(' - '); 
+        const [startHours, startMinutes] = startTime.split(':');
+        const intervalDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
 
-//         if (intervalDate < now) {
-//             return `<option value="${interval}" disabled>${interval}</option>`;
-//         } else {
-//             return `<option value="${interval}">${interval}</option>`;
-//         }
-//     }).join('');
+        if (intervalDate < now) {
+            return `<option value="${interval}" disabled>${interval}</option>`;
+        } else {
+            return `<option value="${interval}">${interval}</option>`;
+        }
+    }).join('');
 
-//     bookingTimes.forEach(booking => {
-//         const startTime = booking.start;
-//         const endTime = booking.end;
+    bookingTimes.forEach(booking => {
+        const startTime = booking.start;
+        const endTime = booking.end;
 
-//         const bookedOption = bookingTime.querySelector(`option[value="${startTime} - ${endTime}"]`);
-//         if (bookedOption) {
-//             bookedOption.disabled = true;
-//             bookedOption.textContent += ' (booked)';
-//         }
+        const bookedOption = bookingTime.querySelector(`option[value="${startTime} - ${endTime}"]`);
+        if (bookedOption) {
+            bookedOption.disabled = true;
+            bookedOption.textContent += ' (booked)';
+        }
 
-//         const [startHour, startMinutes] = startTime.split(':');
-//         const [endHour, endMinutes] = endTime.split(':');
-//         const oneHourBefore = `${(parseInt(startHour, 10) - 1).toString().padStart(2, '0')}:${startMinutes}`;
-//         const oneHourAfter = `${(parseInt(endHour, 10) + 1).toString().padStart(2, '0')}:${endMinutes}`;
+        const [startHour, startMinutes] = startTime.split(':');
+        const [endHour, endMinutes] = endTime.split(':');
+        const oneHourBefore = `${(parseInt(startHour, 10) - 1).toString().padStart(2, '0')}:${startMinutes}`;
+        const oneHourAfter = `${(parseInt(endHour, 10) + 1).toString().padStart(2, '0')}:${endMinutes}`;
 
-//         const beforeOption = bookingTime.querySelector(`option[value="${oneHourBefore}"]`);
-//         const afterOption = bookingTime.querySelector(`option[value="${oneHourAfter}"]`);
+        const beforeOption = bookingTime.querySelector(`option[value="${oneHourBefore}"]`);
+        const afterOption = bookingTime.querySelector(`option[value="${oneHourAfter}"]`);
 
-//         if (beforeOption) {
-//             beforeOption.disabled = true;
-//             beforeOption.textContent += ' (unavailable)';
-//         }
-//         if (afterOption) {
-//             afterOption.disabled = true;
-//             afterOption.textContent += ' (unavailable)';
-//         }
-//     });
-// }
+        if (beforeOption) {
+            beforeOption.disabled = true;
+            beforeOption.textContent += ' (unavailable)';
+        }
+        if (afterOption) {
+            afterOption.disabled = true;
+            afterOption.textContent += ' (unavailable)';
+        }
+    });
+}
 
     function generateIntervals(start, end, interval) {
         const times = [];
@@ -542,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(bookingData)
             });
             const data = await response.json();
-            console.log(data);
             return data;
         }
         document.getElementById('payButton').addEventListener('click', () => {

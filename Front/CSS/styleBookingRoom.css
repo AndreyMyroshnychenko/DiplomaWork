@@ -315,3 +315,7 @@ body, html {
 #payButton:hover {
     background-color: #45a049;
 }
+.noteText{
+    display: flex;
+    flex-direction: column;
+}

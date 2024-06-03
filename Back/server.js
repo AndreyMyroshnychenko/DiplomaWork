@@ -69,7 +69,6 @@ app.post('/api/signup', async (req, res) => {
 
 app.get('/api/rooms', async (req, res) => {
     const { company, country } = req.query;
-    console.log(company, country);
     try {
         const { data: rooms, error } = await supabase
             .from('Room')
@@ -87,6 +86,54 @@ app.get('/api/rooms', async (req, res) => {
         res.status(500).send('Error fetching rooms');
     }
 });
+app.get('/api/bookings/:username', async (req, res) => {
+    try {
+        const userName=req.params.username;
+        const response = await supabase
+        .from('Participant')
+        .select('*')
+        .eq('name', userName);
+        
+        const { data, error } = await supabase
+            .from('Booking')
+            .select('*, Room (name)')
+            
+            .eq('participant_id', response.data[0].id);
+
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+app.put('/api/bookings/:id', async (req, res) => {
+    const bookingId = req.params.id;
+    const updatedData = req.body;
+
+    try {
+
+
+        const { data, error } = await supabase
+            .from('Booking')
+            .update([{ 
+                notes: updatedData.notes, 
+                start_time: updatedData.start_time, 
+                end_time: updatedData.end_time, 
+            }])
+            .eq('id', bookingId);
+
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 app.post('/api/bookings', async (req, res) => {
     const newBooking = req.body;
     try {
@@ -94,16 +141,17 @@ app.post('/api/bookings', async (req, res) => {
         .from('Participant')
         .select('id')
         .ilike('name', newBooking.participant_id)
-        console.log(participants)
         const roomy=await supabase
         .from('Room')
         .select('id')
         .ilike('name', newBooking.room_name)
-        console.log(roomy)
 
         const { data, error } = await supabase
             .from('Booking')
-            .insert([{notes:newBooking.notes, start_time:newBooking.start_time, end_time:newBooking.end_time, participant_id:participants.data[0].id, 
+            .insert([{notes:newBooking.notes, 
+                start_time:newBooking.start_time, 
+                end_time:newBooking.end_time, 
+                participant_id:participants.data[0].id, 
                 room_id:roomy.data[0].id}]);
         if (error) {
             return res.status(500).json({ error: error.message });
@@ -115,72 +163,34 @@ app.post('/api/bookings', async (req, res) => {
    
 });
 
-
-app.put('/api/bookings/:id', async (req, res) => {
-    const bookingId = req.params.id;
-    const updatedData = req.body;
-
-    try {
-        const { data: participantsData, error: participantsError } = await supabase
-            .from('Participant')
-            .select('id')
-            .ilike('name', updatedData.participant_id);
-
-        if (participantsError || participantsData.length === 0) {
-            return res.status(404).json({ error: 'Participant not found' });
-        }
-
-        const { data: roomData, error: roomError } = await supabase
-            .from('Room')
-            .select('id')
-            .ilike('name', updatedData.room_name);
-
-        if (roomError || roomData.length === 0) {
-            return res.status(404).json({ error: 'Room not found' });
-        }
-
-        const participantId = participantsData[0].id;
-        const roomId = roomData[0].id;
-
-        const { data, error } = await supabase
-            .from('Booking')
-            .update({ 
-                notes: updatedData.notes, 
-                start_time: updatedData.start_time, 
-                end_time: updatedData.end_time, 
-                participant_id: participantId, 
-                room_id: roomId 
-            })
-            .eq('id', bookingId);
-
-        if (error) {
-            return res.status(500).json({ error: error.message });
-        }
-
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
 app.delete('/api/bookings/:id', async (req, res) => {
+    const bookingForDelete = req.body;
     const bookingId = req.params.id;
 
     try {
+
+
         const { data, error } = await supabase
             .from('Booking')
             .delete()
             .eq('id', bookingId);
-
+        
         if (error) {
             return res.status(500).json({ error: error.message });
         }
 
-        res.json({ message: 'Booking deleted successfully' });
+        if (data.length === 0) {
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+        
+        res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+
 });
+
+
 
 app.use(express.static(path.join(path.resolve(), 'Front')));
 
