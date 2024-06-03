@@ -244,45 +244,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('cancelBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
-
-        // const booking = bookings.find(b => b.id == bookingId);
         if (confirm("Are you sure you want to cancel this booking?")) {
-            // const index = bookings.findIndex(b => b.id == bookingId);
-            // bookings.splice(index, 1);
-            // localStorage.setItem("bookings", JSON.stringify(bookings));
-            
-            // console.log(booking.id)
-    
-            // console.log('Booking to delete:', bookingToDelete);
+
     
             await deleteBooking(bookingId); 
             
-          
-            // contextMenu.style.display = 'none';
         } else {
-            // contextMenu.style.display = 'none';
+
         }
         fetchBookings(localStorage.getItem('username'));
     });
-    
-    
-    async function updateBooking(bookingId, updatedData) {
-        const response = await fetch(`${baseUrl}/bookings/${bookingId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedData)
-        });
-    
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(errorMessage);
-        }
-    
-        const data = await response.json();
-        return data;
-    }
     
     document.getElementById('confirmEditBtn').addEventListener('click', async function() {
         const id = editBookingModal.dataset.bookingId;

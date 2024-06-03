@@ -190,8 +190,6 @@ app.delete('/api/bookings/:id', async (req, res) => {
 
 });
 
-
-
 app.use(express.static(path.join(path.resolve(), 'Front')));
 
 app.get('/', (req, res) => {
