@@ -39,6 +39,29 @@ app.post('/api/signup', async (req, res) => {
     }
 
     try {
+        const { data: existingPasswords, error: passwordError } = await supabase
+            .from('Participant')
+            .select('id')
+            .eq('password', password);
+
+        if (passwordError) {
+            return res.status(500).json({ error: passwordError.message });
+        }
+        if (existingPasswords.length > 0) {
+            return res.status(400).json({ error: 'This password is already in use. Please choose another one.' });
+        }
+        const { data: existingEmails, error: emailError } = await supabase
+            .from('Participant')
+            .select('id')
+            .eq('email', email);
+
+        if (emailError) {
+            return res.status(500).json({ error: emailError.message });
+        }
+
+        if (existingEmails.length > 0) {
+            return res.status(400).json({ error: 'This email is already in use. Please choose another one.' });
+        }
         const { data: insertData, error: insertError } = await supabase
             .from('Participant')
             .insert([{ name: username, email, password }]);
@@ -66,6 +89,8 @@ app.post('/api/signup', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+
 
 app.get('/api/rooms', async (req, res) => {
     const { company, country } = req.query;
