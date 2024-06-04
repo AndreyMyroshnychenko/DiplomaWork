@@ -44,7 +44,7 @@ async function signup(username, email, password) {
         window.location.href = 'mainPage.html';
     } else {
         console.error('Registration failed:', data.error);
-        alert(data.error);  
+        alert(data.error); 
     }
 };
 
