@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('cancelBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
-        if (confirm("Are you sure you want to cancel this booking?")) {
+        if (confirm("Впевнені, що хочете відмінити це бронювання?")) {
 
     
             await deleteBooking(bookingId); 
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage.textContent = 'Failed to fetch rooms';
             }
         } else {
-            errorMessage.textContent = 'The selected company does not have offices in the selected country.';
+            errorMessage.textContent = 'Обрана компанія немає офісів в даній країні!';
         }
     });
 
@@ -508,14 +508,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function redirectToPaymentForm(room) {
         const paymentForm = `
             <div id="paymentForm">
-                <h4>Payment for ${room.name}</h4>
-                <label for="cardNumber">Card Number:</label>
+                <h4>Оплата ${room.name}</h4>
+                <label for="cardNumber">Номер картки:</label>
                 <input type="text" id="cardNumber" name="cardNumber" required>
-                <label for="cardCVC">CVC:</label>
+                <label for="cardCVC">3-значний код:</label>
                 <input type="text" id="cardCVC" name="cardCVC" required>
-                <label for="cardExpiry">Expiry Date (MM/DD):</label>
+                <label for="cardExpiry">Дія придатності (MM/DD):</label>
                 <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/DD" required>
-                <button id="payButton">Pay</button>
+                <button id="payButton">Олпатити</button>
             </div>
         `;
     
@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
             createBooking({room_name:currentStash.title, participant_id:localStorage.getItem("username"), 
                 start_time:currentStash.startTime, end_time:currentStash.endTime, notes:currentStash.notes});
             currentStash=undefined;
-            alert('Payment Successful');
+            alert('Оплата пройшла успішно');
 
             redirectToMainPage();
         });
@@ -613,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', event => {
         if (!isLoggedIn) {
           event.preventDefault();
-          alert('Please log in to access this feature.');
+          alert('Будь ласка, спочатку увійдіть до свого акаунту!');
           window.location.href = 'login.html'; 
         }
       });

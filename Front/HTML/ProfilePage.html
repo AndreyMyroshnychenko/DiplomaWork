@@ -11,15 +11,15 @@
     <img src="../images/Earth.jpg" class="mainImg" alt="Earth Image">
     <div class="header">
         <div class="menu-left">
-            <a href="aboutUs.html" class="menu-btn">About Us</a>
-            <a href="bookingRoom.html" class="menu-btn">Book a Room</a>
+            <a href="aboutUs.html" class="menu-btn">Про нас</a>
+            <a href="bookingRoom.html" class="menu-btn">Замовити кімнату</a>
         </div>
         <div class="userAvatar">
             <input type="file" id="avatarInput" style="display:none;">
             <label for="avatarInput" class="avatarLabel" id="avatarImage"><img src="../images/AvatarDefault.jpg" alt="Avatar" class="ave"></label>
         </div>
         <div class="menu-right">
-            <button class="logOutButton" id="logoutButton">Log Out</button>
+            <button class="logOutButton" id="logoutButton">Вийти</button>
             <div class="menuContainer">
                 <div class="menuIcon" id="menuIcon">
                     <div class="menuBar"></div>
@@ -27,7 +27,7 @@
                     <div class="menuBar"></div>
                 </div>
                 <div class="sideMenu" id="sideMenu">
-                    <button id="myBookingsBtn">My Bookings</button>
+                    <button id="myBookingsBtn">Мої бронювання</button>
                 </div>
             </div>
         </div>
@@ -37,21 +37,21 @@
     </div>
 
     <div class="context-menu" id="contextMenu">
-        <button id="editBookingBtn">Edit Booking</button>
-        <button id="cancelBookingBtn">Cancel Booking</button>
+        <button id="editBookingBtn">Змінити</button>
+        <button id="cancelBookingBtn">Відмінити</button>
     </div>
 
     <div class="modal" id="editBookingModal">
-        <label for="bookingTitle">Booking Title</label>
+        <label for="bookingTitle">Назва</label>
         <input type="text" id="bookingTitle" />
-        <label for="bookingStartTime">Booking Start Time</label>
+        <label for="bookingStartTime">Початок бронювання</label>
         <input type="time" id="bookingStartTime" />
-        <label for="bookingEndTime">Booking End Time</label>
+        <label for="bookingEndTime">Кінець бронювання</label>
         <input type="time" id="bookingEndTime" />
-        <label for="bookingNotes">Notes</label>
+        <label for="bookingNotes">Нотатки</label>
         <textarea id="bookingNotes"></textarea>
-        <button id="confirmEditBtn">Confirm</button>
-        <button id="cancelEditBtn">Cancel</button>
+        <button id="confirmEditBtn">Підтвердити</button>
+        <button id="cancelEditBtn">Відмінити</button>
     </div>
     <script src="../scripts.js"></script>
 </body>

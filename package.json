@@ -2,11 +2,12 @@
   "name": "diplomawork",
   "version": "1.0.0",
   "description": "Software App For Booking Meeting Rooms Іn The Offices Of IT Companies.",
+  "main": "Front/main.js",
+
   "type": "module",
-  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+   "start": "node Back/server.js",
     "build": "electron-builder"
   },
   "build": {
@@ -14,7 +15,7 @@
     "win": {
       "target": "nsis"
     }
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AndreyMyroshnychenko/DiplomaWork.git"
@@ -43,6 +44,8 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
-    "electron-builder": "^24.13.3"
+    "electron": "^31.0.1",
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.2"
   }
 }

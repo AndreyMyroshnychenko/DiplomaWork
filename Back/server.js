@@ -35,7 +35,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/signup', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
-        return res.status(400).json({ error: 'Username, email, and password are required' });
+        return res.status(400).json({ error: 'Потрібно ввести усі дані!' });
     }
 
     try {
@@ -48,7 +48,7 @@ app.post('/api/signup', async (req, res) => {
             return res.status(500).json({ error: passwordError.message });
         }
         if (existingPasswords.length > 0) {
-            return res.status(400).json({ error: 'This password is already in use. Please choose another one.' });
+            return res.status(400).json({ error: 'Цей пароль уже використовується. Зробіть інший!' });
         }
         const { data: existingEmails, error: emailError } = await supabase
             .from('Participant')
@@ -60,7 +60,7 @@ app.post('/api/signup', async (req, res) => {
         }
 
         if (existingEmails.length > 0) {
-            return res.status(400).json({ error: 'This email is already in use. Please choose another one.' });
+            return res.status(400).json({ error: 'Ця електронна пошта уже використовується. Оберіть іншу!' });
         }
         const { data: insertData, error: insertError } = await supabase
             .from('Participant')
