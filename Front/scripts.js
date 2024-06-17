@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('editBookingBtn').addEventListener('click', async function() {
         const bookingId = contextMenu.dataset.bookingId;
         const bookings= await fetchBookings(localStorage.getItem('username'));
-        const booking = bookings.find(item=>item.id=bookingId);
+        const booking = bookings.find(item=>item.id===bookingId);
         console.log(contextMenu.dataset);
         document.getElementById('bookingTitle').value = booking.Room.name;
         document.getElementById('bookingStartTime').value = booking.start_time;
