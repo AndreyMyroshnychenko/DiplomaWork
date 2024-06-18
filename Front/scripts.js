@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
     
             const bookings = JSON.parse(localStorage.getItem("bookings"));
-            const bookingIndex = bookings.findIndex(b => b.id == id);
+            const bookingIndex = bookings.findIndex(b => b.id === id);
             if (bookingIndex !== -1) {
                 bookings[bookingIndex] = { ...bookings[bookingIndex], ...updatedBooking };
                 localStorage.setItem("bookings", JSON.stringify(bookings));
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (companiesByCountry[selectedCountry] && companiesByCountry[selectedCountry].includes(selectedCompany)) {
             try {
-                const response = await fetch(`/api/rooms?company=${selectedCompany}&country=${selectedCountry}`);
+                const response = await fetch(`${baseUrl}/rooms?company=${selectedCompany}&country=${selectedCountry}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch rooms');
                 }
@@ -505,6 +505,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    async function createBooking(bookingData) {
+        const response = await fetch(`${baseUrl}/bookings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookingData)
+        });
+        const data = await response.json();
+        return data;
+    }
     function redirectToPaymentForm(room) {
         const paymentForm = `
             <div id="paymentForm">
@@ -520,17 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     
         document.body.innerHTML = paymentForm;
-        async function createBooking(bookingData) {
-            const response = await fetch(`${baseUrl}/bookings`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(bookingData)
-            });
-            const data = await response.json();
-            return data;
-        }
+
         document.getElementById('payButton').addEventListener('click', () => {
             const cardNumber = document.getElementById('cardNumber').value;
             const cvc = document.getElementById('cardCVC').value;

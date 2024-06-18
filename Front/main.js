@@ -7,10 +7,13 @@ const __dirname = join(__filename, '..');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1680,
+    height: 900,
     webPreferences: {
-      preload: join(__dirname, 'preload.js')
+      preload: join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false
     }
   });
 
